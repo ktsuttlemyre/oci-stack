@@ -4,10 +4,14 @@ data "oci_identity_tenancy" "tenancy" {
     tenancy_id = var.tenancy_ocid
 }
 
+resource "random_id" "id" {
+	  byte_length = 8
+}
+
 resource "oci_identity_compartment" "this" {
   compartment_id = var.tenancy_ocid
   description    = var.name
-  name           = replace(var.name, " ", "-")
+  name           = replace(format("%s-%s",var.name,random_id.id.hex), " ", "-")
 
   enable_delete = true
 }
