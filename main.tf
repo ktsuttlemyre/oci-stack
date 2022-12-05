@@ -153,7 +153,7 @@ resource "oci_core_instance" "this" {
   source_details {
     source_id               = data.oci_core_images.this.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = 15
+    boot_volume_size_in_gbs = 50
   }
 
   lifecycle {
@@ -215,7 +215,7 @@ resource "oci_core_instance" "that" {
   source_details {
     source_id               = data.oci_core_images.that.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = 170
+    boot_volume_size_in_gbs = 100
   }
 
   lifecycle {
@@ -248,6 +248,9 @@ resource "oci_core_volume_backup_policy" "this" {
     hour_of_day       = count.index
     offset_type       = "STRUCTURED"
     period            = "ONE_WEEK"
+    hourOfDay         = "06:00"
+    dayOfWeek         = "MONDAY"
+    time_zone         = "REGIONAL_DATA_CENTER_TIME"
     retention_seconds = 601200
     time_zone         = "REGIONAL_DATA_CENTER_TIME"
   }
