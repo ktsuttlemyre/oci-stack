@@ -245,7 +245,6 @@ resource "oci_core_volume_backup_policy" "this" {
     period            = "ONE_WEEK"
     hourOfDay         = "06:00"
     dayOfWeek         = "MONDAY"
-    time_zone         = "REGIONAL_DATA_CENTER_TIME"
     retention_seconds = 601200
     time_zone         = "REGIONAL_DATA_CENTER_TIME"
   }
