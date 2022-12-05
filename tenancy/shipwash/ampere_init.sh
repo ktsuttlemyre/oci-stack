@@ -4,7 +4,12 @@ echo "Hello, this is a ampere init script. If you are seeing this then the init 
 echo "whoami $(whoami) username= $USERNAME"
 #update and install tools
 apt update
+
+
+#######################
+#  install dev tools  #
 snap install nano --classic
+
 CMD="java"
 if ! command -v "$CMD" &> /dev/null; then
 	apt install default-jdk --yes
@@ -14,6 +19,10 @@ if ! command -v "$CMD" &> /dev/null; then
 	apt install "$CMD" --yes
 fi
 
+
+
+####################
+#  Create Service  #
 bootscript=/root/boot.sh
 servicename=customboot
 
