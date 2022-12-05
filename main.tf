@@ -243,8 +243,7 @@ resource "oci_core_volume_backup_policy" "this" {
     hour_of_day       = count.index
     offset_type       = "STRUCTURED"
     period            = "ONE_WEEK"
-    hourOfDay         = "06:00"
-    dayOfWeek         = "MONDAY"
+    day_of_week         = "MONDAY"
     retention_seconds = 601200
     time_zone         = "REGIONAL_DATA_CENTER_TIME"
   }
