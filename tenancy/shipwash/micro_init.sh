@@ -41,3 +41,4 @@ cat > /etc/systemd/system/$servicename.service <<-'EOF'
 
 systemctl enable $servicename
 
+sudo shutdown -r now
