@@ -5,6 +5,10 @@ echo "Hello, this is a micro init script. If you are seeing this then the init s
 sudo apt-get update
 #sudo apt-get upgrade
 
+#disable ubuntu firewall
+ufw disable
+
+
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 
