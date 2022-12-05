@@ -48,15 +48,20 @@ resource "oci_core_default_security_list" "this" {
   manage_default_resource_id = oci_core_vcn.this.default_security_list_id
 
   dynamic "ingress_security_rules" {
-    for_each = [22, 80, 443]
+    # ports 8080, 8181, 1935, 1936, 6000\udp
+    for_each = [22, 80, 443, 8080, 8181, 1935, 1936, 6000]
     iterator = port
     content {
-      protocol = local.protocol_number.tcp
+      protocol = "all" #local.protocol_number.tcp
       source   = "0.0.0.0/0"
 
       description = "SSH and HTTPS traffic from any origin"
 
       tcp_options {
+        max = port.value
+        min = port.value
+      }
+      udp_options {
         max = port.value
         min = port.value
       }
