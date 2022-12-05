@@ -119,7 +119,7 @@ resource "oci_core_instance" "this" {
   compartment_id      = oci_identity_compartment.this.id
   shape               = local.shapes.micro
 
-  display_name         = format("Ubuntu %d", count.index + 1)
+  display_name         = format("Mini %d", count.index + 1)
   preserve_boot_volume = false
 
   metadata = {
@@ -143,8 +143,8 @@ EOF
   }
 
   create_vnic_details {
-    display_name     = format("Ubuntu %d", count.index + 1)
-    hostname_label   = format("ubuntu-%d", count.index + 1)
+    display_name     = format("Mini %d", count.index + 1)
+    hostname_label   = format("Mini-%d", count.index + 1)
     nsg_ids          = [oci_core_network_security_group.this.id]
     subnet_id        = oci_core_subnet.this.id
   }
@@ -163,11 +163,16 @@ EOF
 data "oci_core_images" "that" {
   compartment_id = oci_identity_compartment.this.id
 
-  operating_system         = "Oracle Linux"
+  operating_system         = "Canonical Ubuntu"
   shape                    = local.shapes.flex
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
   state                    = "available"
+  filter {
+    name   = "display_name"
+    values = ["^Canonical-Ubuntu-([\\.0-9-]+)$"]
+    regex  = true
+  }
 }
 
 resource "oci_core_instance" "that" {
@@ -175,7 +180,7 @@ resource "oci_core_instance" "that" {
   compartment_id      = oci_identity_compartment.this.id
   shape               = local.shapes.flex
 
-  display_name         = "Oracle Linux"
+  display_name         = "Ship Ampere"
   preserve_boot_volume = false
 
   metadata = {
@@ -200,8 +205,8 @@ EOF
 
   create_vnic_details {
     assign_public_ip = false
-    display_name     = "Oracle Linux"
-    hostname_label   = "oracle-linux"
+    display_name     = "Ship Ampere"
+    hostname_label   = "ship-ampere"
     nsg_ids          = [oci_core_network_security_group.this.id]
     subnet_id        = oci_core_subnet.this.id
   }
