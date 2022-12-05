@@ -1,5 +1,5 @@
 
-data "oci_identity_tenancy" "test_tenancy" {
+data "oci_identity_tenancy" "tenancy" {
     #Required
     tenancy_id = var.tenancy_ocid
 }
