@@ -7,15 +7,15 @@ sudo apt-get update
 sudo apt-get install -y nano jq
 
 
-wget https://raw.githubusercontent.com/dokku/dokku/v0.28.4/bootstrap.sh
-sudo DOKKU_TAG=v0.28.4 bash bootstrap.sh
-#set ssh key for current user
-sudo cat ~/.ssh/authorized_keys | sudo dokku ssh-keys:add admin
-dokku domains:set-global dokku.kqsfl.com
+# wget https://raw.githubusercontent.com/dokku/dokku/v0.28.4/bootstrap.sh
+# sudo DOKKU_TAG=v0.28.4 bash bootstrap.sh
+# #set ssh key for current user
+# sudo cat ~/.ssh/authorized_keys | sudo dokku ssh-keys:add admin
+# dokku domains:set-global dokku.kqsfl.com
 
-#install dokku interface
-wget https://raw.githubusercontent.com/ledokku/ledokku/v0.7.0/ledokku-bootstrap.sh
-sudo bash ledokku-bootstrap.sh
+# #install dokku interface
+# wget https://raw.githubusercontent.com/ledokku/ledokku/v0.7.0/ledokku-bootstrap.sh
+# sudo bash ledokku-bootstrap.sh
 
 # #https://docs.oracle.com/en-us/iaas/developer-tutorials/tutorials/apache-on-ubuntu/01oci-ubuntu-apache-summary.htm
 # sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
