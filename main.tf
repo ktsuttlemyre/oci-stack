@@ -56,15 +56,6 @@ resource "oci_core_default_security_list" "this" {
       source   = "0.0.0.0/0"
 
       description = "SSH and HTTPS traffic from any origin"
-
-      tcp_options {
-        max = port.value
-        min = port.value
-      }
-      udp_options {
-        max = port.value
-        min = port.value
-      }
     }
   }
 
