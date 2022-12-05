@@ -169,11 +169,6 @@ data "oci_core_images" "that" {
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
   state                    = "available"
-  filter {
-    name   = "display_name"
-    values = ["^Canonical-Ubuntu-([\\.0-9-]+)$"]
-    regex  = true
-  }
 }
 
 resource "oci_core_instance" "that" {
