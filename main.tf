@@ -124,12 +124,7 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(<<EOF
-#cloud-config
-runcmd:
-  - apt remove --assume-yes --purge apparmor
-EOF
-    )
+    user_data = "${base64encode(file("./micro_init.sh"))}"
   }
 
   agent_config {
@@ -185,12 +180,7 @@ resource "oci_core_instance" "that" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(<<EOF
-#cloud-config
-runcmd:
-  - grubby --args selinux=0 --update-kernel ALL
-EOF
-    )
+    user_data = "${base64encode(file("./ampere_init.sh"))}"
   }
 
   agent_config {
