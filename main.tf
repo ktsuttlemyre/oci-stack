@@ -152,7 +152,7 @@ EOF
   source_details {
     source_id               = data.oci_core_images.this.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = 50
+    boot_volume_size_in_gbs = 15
   }
 
   lifecycle {
@@ -219,7 +219,7 @@ EOF
   source_details {
     source_id               = data.oci_core_images.that.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = 100
+    boot_volume_size_in_gbs = 170
   }
 
   lifecycle {
