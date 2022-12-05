@@ -13,10 +13,32 @@ CMD="git"
 if ! command -v "$CMD" &> /dev/null; then
 	apt install "$CMD" --yes
 fi
-sudo -i -u ubuntu
-echo "whoami $(whoami) username= $USERNAME"
-sudo -i
-echo "whoami $(whoami) username= $USERNAME"
+
+bootscript=/root/boot.sh
+servicename=customboot
+
+cat > $bootscript <<-'EOF'
+	#!/usr/bin/env bash
+	echo "$bootscript ran at \$(date)!" > /tmp/it-works
+EOF
+
+chmod +x $bootscript
+
+cat > /etc/systemd/system/$servicename.service <<-'EOF'
+	[Service]
+	ExecStart=$bootscript
+	[Install]
+	WantedBy=default.target
+	EOF
+
+systemctl enable $servicename
+
+
+# sudo -i -u ubuntu
+# echo "whoami $(whoami) username= $USERNAME"
+# sudo -i
+# echo "whoami $(whoami) username= $USERNAME"
+
 
 
 echo "done restarting"
@@ -44,3 +66,8 @@ sudo shutodwn -r now
 # 	#Run
 # 	./spigotupdater.sh
 # 	EOF2
+
+
+
+
+
