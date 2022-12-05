@@ -130,7 +130,7 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = "${base64encode(file("./${data.oci_identity_tenancy.tenancy.name}/micro_init.sh"))}"
+    user_data = "${base64encode(file("./tenancy/${data.oci_identity_tenancy.tenancy.name}/micro_init.sh"))}"
   }
 
   agent_config {
@@ -186,7 +186,7 @@ resource "oci_core_instance" "that" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = "${base64encode(file("./${data.oci_identity_tenancy.tenancy.name}/ampere_init.sh"))}"
+    user_data = "${base64encode(file("./tenancy/${data.oci_identity_tenancy.tenancy.name}/ampere_init.sh"))}"
   }
 
   agent_config {
