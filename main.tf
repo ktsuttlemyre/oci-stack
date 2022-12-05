@@ -144,7 +144,7 @@ EOF
 
   create_vnic_details {
     display_name     = format("Mini %d", count.index + 1)
-    hostname_label   = format("Mini-%d", count.index + 1)
+    hostname_label   = format("mini-%d", count.index + 1)
     nsg_ids          = [oci_core_network_security_group.this.id]
     subnet_id        = oci_core_subnet.this.id
   }
@@ -180,7 +180,7 @@ resource "oci_core_instance" "that" {
   compartment_id      = oci_identity_compartment.this.id
   shape               = local.shapes.flex
 
-  display_name         = "Ship Ampere"
+  display_name         = "Ampere"
   preserve_boot_volume = false
 
   metadata = {
@@ -205,8 +205,8 @@ EOF
 
   create_vnic_details {
     assign_public_ip = false
-    display_name     = "Ship Ampere"
-    hostname_label   = "ship-ampere"
+    display_name     = "Ampere"
+    hostname_label   = "ampere"
     nsg_ids          = [oci_core_network_security_group.this.id]
     subnet_id        = oci_core_subnet.this.id
   }
@@ -251,8 +251,8 @@ resource "oci_core_volume_backup_policy" "this" {
     backup_type       = "INCREMENTAL"
     hour_of_day       = count.index
     offset_type       = "STRUCTURED"
-    period            = "ONE_DAY"
-    retention_seconds = 86400
+    period            = "ONE_WEEK"
+    retention_seconds = 604800
     time_zone         = "REGIONAL_DATA_CENTER_TIME"
   }
 }
