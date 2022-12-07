@@ -269,7 +269,7 @@ resource "oci_kms_vault" "this" {
 #https://database-heartbeat.com/2021/10/05/auth-cli/
 resource "oci_identity_dynamic_group" "this" {
     #Required
-    compartment_id = oci_identity_compartment.this.id
+    compartment_id = var.tenancy_ocid
     description = "instances group"
     matching_rule = "All {instance.compartment.id = '${oci_identity_compartment.this.id}'}"
     name = "instances_group"
@@ -279,6 +279,6 @@ resource "oci_identity_policy" "this" {
     depends_on = [oci_identity_compartment.this]
     compartment_id = oci_identity_compartment.this.id
     description = "Instance secret managment"
-    name = "Instance secret management"
+    name = "Instance-secret-management"
     statements = [format("Allow dynamic-group 'Default'/'instance_group' to use secret-family in compartment %s",oci_identity_compartment.this.name)]
 }
