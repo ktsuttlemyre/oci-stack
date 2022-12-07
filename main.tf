@@ -259,3 +259,26 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
   )
   policy_id = oci_core_volume_backup_policy.this[count.index].id
 }
+
+resource "oci_kms_vault" "this" {
+    #Required
+    compartment_id = oci_identity_compartment.this.id
+    display_name = "vault"
+    vault_type = var.vault_vault_type
+}
+
+resource "oci_identity_dynamic_group" "this" {
+    #Required
+    compartment_id = oci_identity_compartment.this.id
+    description = "instances group"
+    matching_rule = "All {instance.compartment.id = '${oci_identity_compartment.this.id}'}"
+    name = "instances_group"
+}
+
+resource "oci_identity_policy" "this" {
+    #Required
+    compartment_id = oci_identity_compartment.this.id
+    description = "Instance secret managment"
+    name = "Instance secret management"
+    statements = "Allow dynamic-group 'Default'/'${oci_identity_dynamic_group.this.name}' to use secret-family in compartment ${oci_identity_compartment.this.name}"
+}
