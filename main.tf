@@ -281,5 +281,5 @@ resource "oci_identity_policy" "this" {
     compartment_id = oci_identity_compartment.this.id
     description = "Instance secret managment"
     name = "Instance secret management"
-    statements = "Allow dynamic-group 'Default'/'${oci_identity_dynamic_group.this.name}' to use secret-family in compartment ${oci_identity_compartment.this.name}"
+    statements = format("Allow dynamic-group 'Default'/'instance_group' to use secret-family in compartment %s",format("%s-%s",var.name,random_id.id.hex))
 }
