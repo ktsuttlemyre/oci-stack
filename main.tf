@@ -277,7 +277,7 @@ resource "oci_identity_dynamic_group" "this" {
 }
 
 resource "oci_identity_policy" "this" {
-    #Required
+    depends_on = [random_id.id]
     compartment_id = oci_identity_compartment.this.id
     description = "Instance secret managment"
     name = "Instance secret management"
