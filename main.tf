@@ -267,6 +267,7 @@ resource "oci_kms_vault" "this" {
     vault_type = var.vault_vault_type
 }
 
+#https://database-heartbeat.com/2021/10/05/auth-cli/
 resource "oci_identity_dynamic_group" "this" {
     #Required
     compartment_id = oci_identity_compartment.this.id
