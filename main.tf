@@ -259,12 +259,14 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
   policy_id = oci_core_volume_backup_policy.this[count.index].id
 }
 
-resource "oci_kms_vault" "this" {
-    #Required
-    compartment_id = oci_identity_compartment.this.id
-    display_name = "vault"
-    vault_type = "DEFAULT"
-}
+# Vaults are scarce resources on OCI, take too long to create and destroy so terraform times out.
+# just use a root compartment vault
+# resource "oci_kms_vault" "this" {
+#     #Required
+#     compartment_id = oci_identity_compartment.this.id
+#     display_name = "vault"
+#     vault_type = "DEFAULT"
+# }
 
 #https://database-heartbeat.com/2021/10/05/auth-cli/
 resource "oci_identity_dynamic_group" "this" {
