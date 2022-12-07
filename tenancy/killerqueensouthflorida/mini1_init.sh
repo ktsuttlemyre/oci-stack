@@ -5,6 +5,7 @@ echo "Hello, this is a ampere init script. If you are seeing this then the init 
 got () {
 	# 1= user 2 = repo
 	BRANCH=${3:-master}
+	[ -d "$2" ] && rm -rf "$2"
 	curl -L -O "https://github.com/$1/$2/archive/$BRANCH.zip" | gunzip -S
 }
 
@@ -19,7 +20,10 @@ export OCI_CLI_AUTH=instance_principal
 echo "export OCI_CLI_AUTH=instance_principal" > /etc/environment
 
 #get secret
-oci secrets secret-bundle get-secret-bundle-by-name --vault-id "ocid1.vault.oc1.iad.b5ry7zhyaaaes.abuw
+oci secrets secret-bundle get-secret-bundle-by-name --vault-id "ocid1.vault.oc1.iad.b5ry7zhyaaaes.abuw"
+
+got "timothymiller" "cloudflare-ddns"
+
 
 
 echo "whoami $(whoami) username= $USERNAME"
