@@ -264,7 +264,7 @@ resource "oci_kms_vault" "this" {
     #Required
     compartment_id = oci_identity_compartment.this.id
     display_name = "vault"
-    vault_type = var.vault_vault_type
+    vault_type = "VIRTUAL_PRIVATE"
 }
 
 #https://database-heartbeat.com/2021/10/05/auth-cli/
