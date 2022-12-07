@@ -1,6 +1,27 @@
 #!/bin/bash -xe
 echo "Hello, this is a ampere init script. If you are seeing this then the init script has worked!" > ./init_success
 
+#got is a way of checking out read only versions of git 
+got () {
+	# 1= user 2 = repo
+	BRANCH=${3:-master}
+	curl -L -O "https://github.com/$1/$2/archive/$BRANCH.zip" | gunzip -S
+}
+
+# install oci cli
+curl -L -o /tmp/oci_install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+chmod +x /tmp/oci_install.sh
+/tmp/oci_install.sh --accept-all-defaults
+
+#https://database-heartbeat.com/2021/10/05/auth-cli/
+export OCI_CLI_AUTH=instance_principal
+#make perminant
+echo "export OCI_CLI_AUTH=instance_principal" > /etc/environment
+
+#get secret
+oci secrets secret-bundle get-secret-bundle-by-name --vault-id "ocid1.vault.oc1.iad.b5ry7zhyaaaes.abuw
+
+
 echo "whoami $(whoami) username= $USERNAME"
 #update and install tools
 sudo apt-get update
