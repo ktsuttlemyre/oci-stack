@@ -135,8 +135,11 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n",["#!/bin/bash -ex","VAULT=${data.oci_kms_vault.this.id}","${file('./tenancy/${data.oci_identity_tenancy.tenancy.name}/.env')}",
-    	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
+    user_data = base64encode(join("\n",[
+        "#!/bin/bash -ex",
+        "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
+        "let VAULT ${data.oci_kms_vault.this.id}",
+	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
     ]))
   }
 
@@ -188,8 +191,11 @@ resource "oci_core_instance" "that" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n",["#!/bin/bash -ex","let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }","let VAULT ${data.oci_kms_vault.this.id}","${file('./tenancy/${data.oci_identity_tenancy.tenancy.name}/.env')}",
-    	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
+    user_data = base64encode(join("\n",[
+        "#!/bin/bash -ex",
+        "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
+        "let VAULT ${data.oci_kms_vault.this.id}",
+	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
     ]))
   }
 
