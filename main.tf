@@ -91,7 +91,7 @@ resource "oci_core_network_security_group_security_rule" "this" {
 
 #use the vault at the root with the same name as the tenancy
 data "oci_kms_vaults" "this" {
-     compartment_id = oci_identity_compartment.this.id
+     compartment_id = var.tenancy_ocid
 }
 
 data "oci_identity_availability_domains" "this" {
