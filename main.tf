@@ -90,9 +90,8 @@ resource "oci_core_network_security_group_security_rule" "this" {
 }
 
 #use the vault at the root with the same name as the tenancy
-data "oci_kms_vault" "this" {
+data "oci_kms_vaults" "this" {
      compartment_id = oci_identity_compartment.this.id
-     display_name = data.oci_identity_tenancy.tenancy.name
 }
 
 data "oci_identity_availability_domains" "this" {
@@ -138,9 +137,9 @@ resource "oci_core_instance" "this" {
     user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
-        "let VAULT ${data.oci_kms_vault.this.id}"],[
-	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
-    ])))
+        "let VAULT ${data.oci_kms.vaults.this.vaults[index(data.oci_kms.vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"]
+	,[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
+	)))
   }
 
   agent_config {
@@ -194,9 +193,9 @@ resource "oci_core_instance" "that" {
     user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
-        "let VAULT ${data.oci_kms_vault.this.id}"],[
-	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
-    ])))
+        "let VAULT ${data.oci_kms.vaults.this.vaults[index(data.oci_kms.vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"]
+	,[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
+	)))
   }
 
   agent_config {
