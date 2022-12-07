@@ -6,12 +6,12 @@ connect () {
 
 TMP_FILE=$(mktemp)
 query () {
+    #get tenancy id 
+    TENANCY_ID=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?contains(\"id\",'tenancy')].id | [0]")
     #get stack id
-    #oci resource-manager stack list --sort-by TIMECREATED --sort-order DESC --lifecycle-state ACTIVE &
-    STACK_ID="ocid1.ormstack.oc1.iad.amaaaaaauw7u7haataho2v7nqyp3qexct34h3kg335u6xl5jta6pyl4buoka"
-
+    STACK_ID=$(oci resource-manager stack list --compartment-id "$TENANCY_ID" --sort-by TIMECREATED --sort-order DESC --lifecycle-state ACTIVE --raw-output  --query "data [0].id")
     # get data
-    oci resource-manager stack get-stack-tf-state --file - --stack-id "$STACK_ID" > "$TMP_FILE" &
+    oci resource-manager stack get-stack-tf-state --file - --stack-id "$STACK_ID" > "$TMP_FILE"
 }
 
 query_wait (){
@@ -39,7 +39,7 @@ query_wait (){
 
 mkdir -p ~/instances
 INSTANCE="${1:-ampere}"
-query
+query &
 
 if ! connect; then
     echo "SSH connection failed. Waiting for ip query"
