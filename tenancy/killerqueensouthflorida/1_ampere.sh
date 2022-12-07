@@ -1,9 +1,3 @@
-#!/bin/bash -xe
-echo "Hello, this is a ampere init script. If you are seeing this then the init script has worked!" > ./init_success
-
-echo "whoami $(whoami) username= $USERNAME"
-
-sudo apt-get update
 sudo apt-get install -y nano jq
 
 
@@ -50,5 +44,3 @@ sudo apt-get install -y nano jq
 
 
 # cat /home/$USER/.oci/oci_api_key_public.pem
-
-sudo shutdown -r now
