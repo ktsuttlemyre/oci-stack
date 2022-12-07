@@ -4,14 +4,11 @@ data "oci_identity_tenancy" "tenancy" {
     tenancy_id = var.tenancy_ocid
 }
 
-resource "random_id" "id" {
-	  byte_length = 8
-}
 
 resource "oci_identity_compartment" "this" {
   compartment_id = var.tenancy_ocid
   description    = var.name
-  name           = replace(format("%s-%s",var.name,random_id.id.hex), " ", "-")
+  name           = replace(var.name, " ", "-")
 
   enable_delete = true
 }
@@ -281,5 +278,5 @@ resource "oci_identity_policy" "this" {
     compartment_id = oci_identity_compartment.this.id
     description = "Instance secret managment"
     name = "Instance secret management"
-    statements = format("Allow dynamic-group 'Default'/'instance_group' to use secret-family in compartment %s",format("%s-%s",var.name,random_id.id.hex))
+    statements = format("Allow dynamic-group 'Default'/'instance_group' to use secret-family in compartment %s",replace(var.name, " ", "-"))
 }
