@@ -135,12 +135,12 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n",[
+    user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
-        "let VAULT ${data.oci_kms_vault.this.id}",
+        "let VAULT ${data.oci_kms_vault.this.id}"],[
 	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
-    ]))
+    ])))
   }
 
   agent_config {
@@ -191,12 +191,12 @@ resource "oci_core_instance" "that" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n",[
+    user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
-        "let VAULT ${data.oci_kms_vault.this.id}",
+        "let VAULT ${data.oci_kms_vault.this.id}"],[
 	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
-    ]))
+    ])))
   }
 
   agent_config {
