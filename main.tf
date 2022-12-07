@@ -89,6 +89,12 @@ resource "oci_core_network_security_group_security_rule" "this" {
   source                    = "0.0.0.0/0"
 }
 
+#use the vault at the root with the same name as the tenancy
+data "oci_kms_vault" "this" {
+     compartment_id = oci_identity_compartment.this.id
+     display_name = data.oci_identity_tenancy.tenancy.name
+}
+
 data "oci_identity_availability_domains" "this" {
   compartment_id = var.tenancy_ocid
 }
@@ -129,7 +135,7 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n", [
+    user_data = base64encode(join("\n",["#!/bin/bash -ex","VAULT=${data.oci_kms_vault.this.id}","${file('./tenancy/${data.oci_identity_tenancy.tenancy.name}/.env')}",
     	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
     ]))
   }
@@ -182,8 +188,8 @@ resource "oci_core_instance" "that" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n", [
-    	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)
+    user_data = base64encode(join("\n",["#!/bin/bash -ex","let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }","let VAULT ${data.oci_kms_vault.this.id}","${file('./tenancy/${data.oci_identity_tenancy.tenancy.name}/.env')}",
+    	for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)
     ]))
   }
 
