@@ -294,8 +294,8 @@ resource "oci_identity_dynamic_group" "this" {
 
 resource "oci_identity_policy" "this" {
     depends_on = [oci_identity_compartment.this]
-    compartment_id = oci_identity_compartment.this.id
+    compartment_id = var.tenancy_ocid
     description = "Instance secret managment"
     name = "Instance-secret-management"
-    statements = [format("Allow dynamic-group 'Default'/'instance_group' to use secret-family in compartment %s",oci_identity_compartment.this.name)]
+    statements = ["Allow dynamic-group 'Default'/'instances_group' to use secret-family in tenancy"]
 }
