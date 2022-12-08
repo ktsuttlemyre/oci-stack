@@ -56,7 +56,11 @@ directory tree
 I send the .oci config file as a zip file that has been converted to base64.
 
 To load it from the variable run
-`echo "$OCI_CONFIG" | base64 -d | tar -xz`
+```
+echo "$OCI_CONFIG" | base64 -d | tar -xz
+oci setup repair-file-permissions --file ~/.oci/oci_api.pem 
+oci setup repair-file-permissions --file ~/.oci/config 
+```
 
 To create a base64 string for saving to the vault use
 `tar -zc .oci | base64 -w0 > OCI_CONFIG.base64`
