@@ -93,4 +93,4 @@ cat > cloudflare-ddns/config.json <<-'EOF'
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 #Add ubuntu to the docker group to avoid needing sudo to run the docker command:
-sudo usermod -aG docker ubuntu 
+sudo usermod -aG docker $USERNAME 
