@@ -10,15 +10,37 @@ got () {
 }
 
 # set a variable permenantly 
-let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }
+let(){
+	local source
+	if [[ $(type -t "$1") == function ]];
+		source=$(type SECRET | tail -n +2)
+	else
+		declare -xg $1="$2"
+		source = "export $1='$2'"
+	fi
+	echo "$source" >> /etc/environment
+}
+
+change_user () {
+	sudo -i -u ubuntu
+	echo "Changed user [whoami: $(whoami)] [USERNAME=$USERNAME] [SUDO_USER=$SUDO_USER]"
+}
+
+SECRET() {
+	oci secrets secret-bundle get-secret-bundle-by-name --vault-id $VAULT --secret-name "$1" | jq -r '.data."secret-bundle-content".content | @base64d'
+}
+
+let change_user
+let let
+let got
+let secret
 
 #sudo user
 #disable ubuntu firewall
 ufw disable
 
 #go to admin user
-sudo -i -u ubuntu
-echo "Changed user [whoami: $(whoami)] [USERNAME=$USERNAME] [SUDO_USER=$SUDO_USER]"
+change_user "ubuntu"
 
 # install oci cli
 curl -L -o /tmp/oci_install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
@@ -38,16 +60,11 @@ echo “$OCI_CONFIG” | base64 -d | tar -xz
 oci setup repair-file-permissions –file ~/.oci/oci_api.pem
 oci setup repair-file-permissions –file ~/.oci/config
 
-
-SECRET() {
-	oci secrets secret-bundle get-secret-bundle-by-name --vault-id $VAULT --secret-name "$1" | jq -r '.data."secret-bundle-content".content | @base64d'
-}
-
 #get secret
 CLOUDFLARE_TOKEN=SECRET CLOUDFLARE_TOKEN
 CLOUDFLARE_ZONEID=SECRET CLOUDFLARE_ZONEID
 
-
+#install DDNS for cloudflare
 #https://github.com/timothymiller/cloudflare-ddns
 got "timothymiller" "cloudflare-ddns"
 cat > cloudflare-ddns/config.json <<-'EOF'
@@ -75,10 +92,5 @@ cat > cloudflare-ddns/config.json <<-'EOF'
 
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
-
-#Add the current user to the docker group to avoid needing sudo to run the docker command:
-usermod -aG docker $USER 
-
-
-sudo -i -u ubuntu
-echo "Changed to user whoami: $(whoami) username: $USERNAME"
+#Add ubuntu to the docker group to avoid needing sudo to run the docker command:
+sudo usermod -aG docker ubuntu 
