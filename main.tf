@@ -148,13 +148,29 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n",concat([
-        "#!/bin/bash -ex",
-        "let(){ declare -xg $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }",
-        "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"let OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"],
-	    [for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
-	)))
+    user_data = base64encode(<<EOF
+#cloud-config
+packages_update: true
+packages_upgrade: true
+packages:
+#  - git
+#  - python3-pip
+runcmd:
+  # Note: Don't write files to /tmp from cloud-init use /run/somedir instead.
+  # Early boot environments can race systemd-tmpfiles-clean LP: #1707222.
+  - "set -ex"
+  - "let(){ export -xg $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
+  - "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
+  - "let OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+  - "./init_script.sh"
+write_files:
+- encoding: b64
+  content: "${base64encode(join(\"\n\",[for fn in fileset(\".\", \"./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**\") : file(fn)]))}"
+  owner: root:root
+  path: /root/init_script.sh
+#  permissions: '0644'
+EOF
+    )	  
   }
 
   agent_config {
@@ -205,13 +221,29 @@ resource "oci_core_instance" "that" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data = base64encode(join("\n",concat([
-        "#!/bin/bash -ex",
-        "let(){ declare -xg $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }",
-        "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"let OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"],
-	[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)]
-	)))
+    user_data = base64encode(<<EOF
+#cloud-config
+packages_update: true
+packages_upgrade: true
+packages:
+#  - git
+#  - python3-pip
+runcmd:
+  # Note: Don't write files to /tmp from cloud-init use /run/somedir instead.
+  # Early boot environments can race systemd-tmpfiles-clean LP: #1707222.
+  - "set -ex"
+  - "let(){ export -xg $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
+  - "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
+  - "let OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+  - "./init_script.sh"
+write_files:
+- encoding: b64
+  content: "${base64encode(join(\"\n\",[for fn in fileset(\".\", \"./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**\") : file(fn)]))}"
+  owner: root:root
+  path: /root/init_script.sh
+#  permissions: '0644'
+EOF
+    )	  
   }
 
   agent_config {
