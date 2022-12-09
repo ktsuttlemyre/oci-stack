@@ -103,7 +103,7 @@ data "oci_vault_secrets" "this" {
 }
 
 data "oci_secrets_secretbundle" "this" {
-      secret_id = "${data.oci_vault_secrets.this.secrets[index(data.oci_vault_secrets.this.secrets.*.secret_name, \"OCID_CONFIG\")].id}"
+      secret_id = "${data.oci_vault_secrets.this.secrets[index(data.oci_vault_secrets.this.secrets.*.secret_name, OCID_CONFIG)].id}"
 }
 
 data "oci_identity_availability_domains" "this" {
