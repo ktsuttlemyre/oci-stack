@@ -99,7 +99,7 @@ data "oci_kms_vault" "this" {
 
 data "oci_vault_secrets" "this" {
     #Required
-    compartment_id = data.oci_kms.vault.this.id
+    compartment_id = data.oci_kms_vault.this.id
 }
 
 data "oci_secrets_secretbundle" "this" {
