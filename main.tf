@@ -100,12 +100,12 @@ data "oci_kms_vault" "this" {
 data "oci_vault_secrets" "this" {
     #Required
     compartment_id = var.tenancy_ocid
-    #name = "OCI_CONFIG"
+    name = "OCI_CONFIG"
     vault_id = data.oci_kms_vault.this.id
 }
 
 data "oci_secrets_secretbundle" "this" {
-      secret_id = data.oci_vault_secrets.this.secrets[index(data.oci_vault_secrets.this.secrets.*.secret_name, "OCID_CONFIG")].id
+      secret_id = data.oci_vault_secrets.this.secrets[0].id
 }
 
 data "oci_identity_availability_domains" "this" {
@@ -152,7 +152,7 @@ resource "oci_core_instance" "this" {
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
         "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content}"],
+	"OCI_CONFIG=${data.oci_vault_secrets.this.secrets[0].value}"],
 	    [for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
 	)))
   }
