@@ -72,3 +72,4 @@ cat > cloudflare-ddns/config.json <<-'EOF1'
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 #Add ubuntu to the docker group to avoid needing sudo to run the docker command:
 sudo usermod -aG docker $USERNAME 
+EOF
