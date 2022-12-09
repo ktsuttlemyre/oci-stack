@@ -93,6 +93,18 @@ resource "oci_core_network_security_group_security_rule" "this" {
 data "oci_kms_vaults" "this" {
      compartment_id = var.tenancy_ocid
 }
+data "oci_kms_vault" "this" {
+     vault_id = ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}
+}
+
+data "oci_vault_secrets" "this" {
+    #Required
+    compartment_id = data.oci_kms.vault.this.id
+}
+
+data "oci_secrets_secretbundle" "this" {
+      secret_id = ${data.oci_vault_secrets.this.secrets[index(data.oci_vault_secrets.this.secrets.*.secret_name, "OCID_CONFIG")].id}
+}
 
 data "oci_identity_availability_domains" "this" {
   compartment_id = var.tenancy_ocid
@@ -137,8 +149,9 @@ resource "oci_core_instance" "this" {
     user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
-        "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"]
-	,[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
+        "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"],
+	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content.content}"],
+	    [for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
 	)))
   }
 
@@ -193,8 +206,9 @@ resource "oci_core_instance" "that" {
     user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
-        "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"]
-	,[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)]
+        "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"],
+	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content.content}"],
+	[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)]
 	)))
   }
 
