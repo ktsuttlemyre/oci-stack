@@ -152,7 +152,7 @@ resource "oci_core_instance" "this" {
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
         "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"OCI_CONFIG=${data.oci_vault_secrets.this.secrets[0].secret_bundle_content}"],
+	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content}"],
 	    [for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
 	)))
   }
@@ -209,7 +209,7 @@ resource "oci_core_instance" "that" {
         "#!/bin/bash -ex",
         "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
         "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"OCI_CONFIG=${data.oci_vault_secrets.this.secrets[0].secret_bundle_content}"],
+	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content}"],
 	[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)]
 	)))
   }
@@ -299,19 +299,20 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 #     vault_type = "DEFAULT"
 # }
 
+#stopped using polocies to manage secrets and now useing oci_confg files/keys
 #https://database-heartbeat.com/2021/10/05/auth-cli/
-resource "oci_identity_dynamic_group" "this" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    description = "instances group"
-    matching_rule = "All {instance.compartment.id = '${oci_identity_compartment.this.id}'}"
-    name = "instances_group"
-}
+# resource "oci_identity_dynamic_group" "this" {
+#     #Required
+#     compartment_id = var.tenancy_ocid
+#     description = "instances group"
+#     matching_rule = "All {instance.compartment.id = '${oci_identity_compartment.this.id}'}"
+#     name = "instances_group"
+# }
 
-resource "oci_identity_policy" "this" {
-    depends_on = [oci_identity_compartment.this]
-    compartment_id = var.tenancy_ocid
-    description = "Instance secret managment"
-    name = "Instance-secret-management"
-    statements = ["Allow dynamic-group 'Default'/'instances_group' to use secret-family in tenancy"]
-}
+# resource "oci_identity_policy" "this" {
+#     depends_on = [oci_identity_compartment.this]
+#     compartment_id = var.tenancy_ocid
+#     description = "Instance secret managment"
+#     name = "Instance-secret-management"
+#     statements = ["Allow dynamic-group 'Default'/'instances_group' to use secret-family in tenancy"]
+# }
