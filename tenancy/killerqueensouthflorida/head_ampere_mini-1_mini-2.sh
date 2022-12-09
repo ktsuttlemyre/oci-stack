@@ -12,24 +12,31 @@ got () {
 # set a variable permenantly 
 let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }
 
-echo "whoami $(whoami) username: $USERNAME"
-#update and install tools
-apt-get update
-#apt-get upgrade
-
+#sudo user
 #disable ubuntu firewall
 ufw disable
 
+#go to admin user
 sudo -i -u ubuntu
-echo "Changed to user whoami: $(whoami) username: $USERNAME"
+echo "Changed user [whoami: $(whoami)] [USERNAME=$USERNAME] [SUDO_USER=$SUDO_USER]"
+
 # install oci cli
 curl -L -o /tmp/oci_install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
 chmod +x /tmp/oci_install.sh
 /tmp/oci_install.sh --accept-all-defaults
 
 #https://database-heartbeat.com/2021/10/05/auth-cli/
+#depricated this was when we used policies
 #set permanant
-let OCI_CLI_AUTH 'instance_principal'
+#let OCI_CLI_AUTH 'instance_principal'
+
+#refresh shell so we can use oci cli
+exec -l $SHELL
+
+#write config to disk from envoronment variable
+echo “$OCI_CONFIG” | base64 -d | tar -xz
+oci setup repair-file-permissions –file ~/.oci/oci_api.pem
+oci setup repair-file-permissions –file ~/.oci/config
 
 
 SECRET() {
@@ -71,4 +78,8 @@ cat > cloudflare-ddns/config.json <<-'EOF'
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 
 #Add the current user to the docker group to avoid needing sudo to run the docker command:
-sudo usermod -aG docker $USER 
+usermod -aG docker $USER 
+
+
+sudo -i -u ubuntu
+echo "Changed to user whoami: $(whoami) username: $USERNAME"
