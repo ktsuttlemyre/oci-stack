@@ -53,7 +53,7 @@ cat > cloudflare-ddns/config.json <<-'EOF1'
 	      "zone_id": "$CLOUDFLARE_ZONEID",
 	      "subdomains": [
 		{
-		  "name": "mini.kqsfl.com",
+		  "name": "mini-1.kqsfl.com",
 		  "proxied": false
 		}
 	      ]
