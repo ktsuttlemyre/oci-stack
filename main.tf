@@ -300,6 +300,8 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 # }
 
 #stopped using polocies to manage secrets and now useing oci_confg files/keys
+# if you do use this method again make sure to set env variables on your instances
+# bash: OCI_CLI_AUTH='instance_principal'
 #https://database-heartbeat.com/2021/10/05/auth-cli/
 # resource "oci_identity_dynamic_group" "this" {
 #     #Required
