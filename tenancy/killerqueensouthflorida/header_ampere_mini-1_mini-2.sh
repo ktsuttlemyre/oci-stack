@@ -1,4 +1,6 @@
 #!/bin/bash -xe
+#cloud_init
+#https://cloudinit.readthedocs.io/en/latest/topics/examples.html
 echo "Hello, this is a $(hostname) init script. If you are seeing this then the init script has started!" | tee > /init.log
 
 #Slim git clone/pull read only function 
@@ -37,15 +39,15 @@ let secret
 
 #sudo user
 #disable ubuntu firewall
-ufw disable
+command -v ufw > /dev/null && ufw disable
 
 #go to admin user
 change_user "ubuntu"
 
 # install oci cli
-curl -L -o /tmp/oci_install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
-chmod +x /tmp/oci_install.sh
-/tmp/oci_install.sh --accept-all-defaults
+curl -L -o /run/oci/oci_install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+chmod +x /run/oci/oci_install.sh
+/run/oci/oci_install.sh --accept-all-defaults
 
 #https://database-heartbeat.com/2021/10/05/auth-cli/
 #depricated this was when we used policies
@@ -89,6 +91,8 @@ cat > cloudflare-ddns/config.json <<-'EOF'
 	  "ttl": 300
 	}
 	EOF
+
+
 
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
