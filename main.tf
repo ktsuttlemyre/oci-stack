@@ -94,7 +94,7 @@ data "oci_kms_vaults" "this" {
      compartment_id = var.tenancy_ocid
 }
 data "oci_kms_vault" "this" {
-     vault_id = ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}
+     vault_id = "${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
 }
 
 data "oci_vault_secrets" "this" {
@@ -103,7 +103,7 @@ data "oci_vault_secrets" "this" {
 }
 
 data "oci_secrets_secretbundle" "this" {
-      secret_id = ${data.oci_vault_secrets.this.secrets[index(data.oci_vault_secrets.this.secrets.*.secret_name, "OCID_CONFIG")].id}
+      secret_id = "${data.oci_vault_secrets.this.secrets[index(data.oci_vault_secrets.this.secrets.*.secret_name, 'OCID_CONFIG')].id}"
 }
 
 data "oci_identity_availability_domains" "this" {
