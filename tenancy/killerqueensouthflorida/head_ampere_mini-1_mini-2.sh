@@ -73,7 +73,6 @@ cat > cloudflare-ddns/config.json <<-'EOF'
 	}
 	EOF
 
-
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 
