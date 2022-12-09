@@ -14,11 +14,11 @@ let(){
 	local source
 	if [[ $(type -t "$1") == function ]];
 		source=$(type SECRET | tail -n +2)
-	else
+	then
 		declare -xg $1="$2"
 		source = "export $1='$2'"
 	fi
-	echo "$source" >> /etc/environment
+	echo "$source" | tee -a /root/.profile /home/ubuntu/.profile
 }
 
 change_user () {
