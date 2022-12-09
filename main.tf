@@ -165,7 +165,7 @@ runcmd:
   - "./init_script.sh"
 write_files:
 - encoding: b64
-  content: "${base64encode(join(\"\n\",[for fn in fileset(\".\", \"./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**\") : file(fn)]))}"
+  content: base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**\") : file(fn)]))
   owner: root:root
   path: /root/init_script.sh
 #  permissions: '0644'
@@ -238,7 +238,7 @@ runcmd:
   - "./init_script.sh"
 write_files:
 - encoding: b64
-  content: "${base64encode(join(\"\n\",[for fn in fileset(\".\", \"./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**\") : file(fn)]))}"
+  content: base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**\") : file(fn)]))
   owner: root:root
   path: /root/init_script.sh
 #  permissions: '0644'
