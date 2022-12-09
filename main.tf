@@ -150,9 +150,9 @@ resource "oci_core_instance" "this" {
     ssh_authorized_keys = var.ssh_public_key
     user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
-        "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
+        "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }",
         "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"],
+	"let OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"],
 	    [for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]
 	)))
   }
@@ -207,9 +207,9 @@ resource "oci_core_instance" "that" {
     ssh_authorized_keys = var.ssh_public_key
     user_data = base64encode(join("\n",concat([
         "#!/bin/bash -ex",
-        "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" >> /etc/environment ; }",
+        "let(){ declare -xg $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }",
         "let VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}",
-	"OCI_CONFIG=${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"],
+	"let OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"],
 	[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)]
 	)))
   }
