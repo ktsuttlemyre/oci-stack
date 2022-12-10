@@ -1,6 +1,6 @@
 #!/bin/bash
 connect () {
-        ssh ubuntu@"$(<~/instances/$INSTANCE)" -i ~/.ssh/ktsuttlemyre
+        ssh -o ConnectTimeout=10 ubuntu@"$(<~/instances/$INSTANCE)" -i ~/.ssh/ktsuttlemyre
         return $?
 }
 
