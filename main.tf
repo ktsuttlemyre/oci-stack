@@ -166,7 +166,7 @@ resource "oci_core_instance" "this" {
 #cloud-config
 packages_update: true
 packages_upgrade: true
-packages:
+#packages:
 #  - git
 #  - python3-pip
 runcmd:
@@ -239,7 +239,7 @@ resource "oci_core_instance" "that" {
 #cloud-config
 packages_update: true
 packages_upgrade: true
-packages:
+#packages:
 #  - git
 #  - python3-pip
 runcmd:
