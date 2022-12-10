@@ -178,10 +178,10 @@ runcmd:
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
   - "./init_script.sh"
 write_files:
-- encoding: b64
-  content: 'base64encode(${join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)])})'
-  owner: root:root
-  path: /root/init_script.sh
+- encoding: "b64"
+  content: "base64encode(${join('\n',[for fn in fileset('.', './tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**') : file(fn)])})"
+  owner: "root:root"
+  path: "/root/init_script.sh"
 #  permissions: '0644'
 EOF
     )	  	  
@@ -251,10 +251,10 @@ runcmd:
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
   - "./init_script.sh"
 write_files:
-- encoding: b64
-  content: 'base64encode(${join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)])})'
-  owner: root:root
-  path: /root/init_script.sh
+- encoding: "b64"
+  content: "base64encode(${join('\n',[for fn in fileset('.', './tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**') : file(fn)])})"
+  owner: "root:root"
+  path: "/root/init_script.sh"
 #  permissions: '0644'
 EOF
     )	  
