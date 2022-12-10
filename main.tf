@@ -136,6 +136,20 @@ data "oci_core_images" "this" {
   }
 }
 
+data template_file "user_data" {
+  template = file("${path.module}/templates/user_data.yaml")
+
+  vars = {
+#    username           = var.username
+#    ssh_public_key     = file(var.ssh_public_key)
+#    packages           = jsonencode(var.packages)
+    vault              = data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id
+    oci_config         = data.oci_secrets_secretbundle.this.secret_bundle_content[0].content
+    init_script        = join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-1**") : file(fn)])
+  }
+}
+
+
 resource "oci_core_instance" "this" {
   count = 2
 
@@ -165,12 +179,12 @@ runcmd:
   - "./init_script.sh"
 write_files:
 - encoding: b64
-  content: base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**\") : file(fn)]))
+  content: base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]))
   owner: root:root
   path: /root/init_script.sh
 #  permissions: '0644'
 EOF
-    )	  
+    )	  	  
   }
 
   agent_config {
@@ -238,7 +252,7 @@ runcmd:
   - "./init_script.sh"
 write_files:
 - encoding: b64
-  content: base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**\") : file(fn)]))
+  content: base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)]))
   owner: root:root
   path: /root/init_script.sh
 #  permissions: '0644'
