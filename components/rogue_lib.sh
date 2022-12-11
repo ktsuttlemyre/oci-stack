@@ -9,7 +9,7 @@ got () {
 }
 
 # set a variable permenantly 
-let(){
+var(){
 	local source
 	if [[ $(type -t "$1") == function ]];
 		source=$(type SECRET | tail -n +2)
