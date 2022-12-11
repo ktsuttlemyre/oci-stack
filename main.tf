@@ -9,8 +9,8 @@ resource "random_id" "id" {
 
 resource "oci_identity_compartment" "this" {
   compartment_id = var.tenancy_ocid
-  description    = var.name
-  name           = replace(format("%s-%s",var.name,random_id.id.hex), " ", "-")
+  description    = replace("${var.name}-compartment"), " ", "-")
+  name           = replace("${var.name}-compartment-${random_id.id.hex}"), " ", "-")
 
   enable_delete = true
 }
@@ -19,7 +19,7 @@ resource "oci_core_vcn" "this" {
   compartment_id = oci_identity_compartment.this.id
 
   cidr_blocks  = [var.cidr_block]
-  display_name = var.name
+  display_name = replace("${var.name}-vcn"), " ", "-")
   dns_label    = "vcn"
 }
 
