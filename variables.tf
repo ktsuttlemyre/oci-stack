@@ -6,7 +6,7 @@ variable "tenancy_ocid" {
 variable "name" {
   description = "Display name for resources"
   type        = string
-  default     = ""
+  default     = "rogue-stack"
 }
 
 variable "cidr_block" {
