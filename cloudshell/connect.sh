@@ -42,11 +42,16 @@ query_wait (){
     return $FAIL
 }
 
+update (){
+        file="connect.sh"
+        curl -L "https://raw.githubusercontent.com/ktsuttlemyre/rogue-stack/main/cloudshell/$file" --output "$file" --silent
+        return $?
+}
 
 mkdir -p ~/instances
 INSTANCE="${1:-ampere}"
 query &
-
+update &
 if ! connect; then
     echo "SSH connection failed. Waiting for ip query"
     query_wait
