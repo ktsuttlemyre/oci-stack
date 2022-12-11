@@ -55,6 +55,7 @@ query &
 update_self &
 connect
 code=$?
+echo "ssh exit code $code"
 #exit_code 130 is a successful exit from terminal
 #so dont treat it as an error and reconnect
 if [ $code -ne 0 ] || [ $code -ne 130 ]; then
