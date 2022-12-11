@@ -54,9 +54,10 @@ INSTANCE="${1:-ampere}"
 query &
 update_self &
 exit_code=connect
+echo $exit_code
 #exit_code 130 is a successful exit from terminal
 #so dont treat it as an error and reconnect
-if [ $exit_code != 0 ] || [ $exit_code != 130 ]; then
+if [ $exit_code -ne 0 ] || [ $exit_code ne 130 ]; then
     echo "SSH connection failed. Waiting for ip query"
     query_wait
     echo "trying connection again"
