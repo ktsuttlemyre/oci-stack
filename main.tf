@@ -176,7 +176,8 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
-  - "./init_script.sh"
+  - "cd ~"
+  - "/root/init_script.sh"
 write_files:
   - encoding: b64
     content: ${base64encode(join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)]))}
@@ -249,6 +250,7 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+  - "cd ~"
   - "./init_script.sh"
 write_files:
   - encoding: "b64"
