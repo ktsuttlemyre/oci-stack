@@ -177,11 +177,11 @@ runcmd:
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
-  - "/root/init_script.sh"
+  - "bash /root/init_script.sh"
 write_files:
   - encoding: b64
     content: ${base64encode(join("\n",concat(["#!/bin/bash -ex"],[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)])))}
-    owner: "root:root"
+#    owner: "root:root"
     path: "/root/init_script.sh"
 #  permissions: '0644'
 EOF
@@ -252,11 +252,11 @@ runcmd:
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
 #  - "cd $HOME"
-  - "/root/init_script.sh"
+  - "bash /root/init_script.sh"
 write_files:
   - encoding: "b64"
     content: ${base64encode(join("\n",concat(["#!/bin/bash -ex"],[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)])))}
-    owner: "root:root"
+#    owner: "root:root"
     path: "/root/init_script.sh"
 #  permissions: '0644'
 EOF
