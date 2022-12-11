@@ -1,12 +1,18 @@
 #!/bin/bash
 connect () {
-        ssh -o ConnectTimeout=10 ubuntu@"$(<~/instances/$INSTANCE)" -i ~/.ssh/ktsuttlemyre
+        key="$HOME/.ssh/$USERNAME"
+        if [ ! -f "$key" ]; then
+                echo "Need to add a ssh key to $key"
+                return 1
+        fi
+        ssh -o ConnectTimeout=10 ubuntu@"$(<~/instances/$INSTANCE)" -i "$key"
         return $?
 }
 
 TMP_FILE=$(mktemp)
 query () {
     #get tenancy id 
+    # https://www.dbarj.com.br/en/2020/10/get-your-tenancy-ocid-using-a-single-oci-cli-command/
     TENANCY_ID=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?contains(\"id\",'tenancy')].id | [0]")
     #get stack id
     STACK_ID=$(oci resource-manager stack list --compartment-id "$TENANCY_ID" --sort-by TIMECREATED --sort-order DESC --lifecycle-state ACTIVE --raw-output  --query "data [0].id")
