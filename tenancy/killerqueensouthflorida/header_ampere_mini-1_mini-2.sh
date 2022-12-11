@@ -112,5 +112,31 @@ cat > /etc/systemd/system/$servicename.service <<-'EOF'
 
 systemctl enable $servicename
 
+
+apt-get install nginx
+
+
+server {
+  server_name sub1.example.com;
+  location / {
+    proxy_pass http://127.0.0.1:xxxx;
+  }
+}
+server {
+  server_name sub2.example.com;
+  location / {
+    proxy_pass http://127.0.0.1:xxxx;
+  }
+}
+
+
+#!/bin/bash
+
+line="* * * * * /path/to/command"
+(crontab -u $(whoami) -l; echo "$line" ) | crontab -u $(whoami) -
+
+
+
+
 echo "Hello, this is a $(hostname) init script. If you are seeing this then the init script has finished! Restarting now" | tee >> /init_start
 sudo shutodwn -r now
