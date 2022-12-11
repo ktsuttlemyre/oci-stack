@@ -5,8 +5,8 @@ connect () {
                 echo "Need to add a ssh key to $key"
                 return 1
         fi
-        ssh -o ConnectTimeout=10 ubuntu@"$(<~/instances/$INSTANCE)" -i "$key"
-        return $?
+        ssh -o ConnectTimeout=10 "ubuntu@$(<~/instances/$INSTANCE)" -i "$key"
+        
 }
 
 TMP_FILE=$(mktemp)
@@ -46,7 +46,7 @@ update_self (){
         file="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")" # get my script name
         # -z will make curl only download if it's changed
         curl -L "https://raw.githubusercontent.com/ktsuttlemyre/rogue-stack/main/cloudshell/$file" -s --output "$file" --silent -z "$file"
-        return $?
+        return
 }
 
 mkdir -p ~/instances
@@ -58,7 +58,7 @@ code=$?
 echo "ssh exit code $code"
 #exit_code 130 is a successful exit from terminal
 #so dont treat it as an error and reconnect
-if [ $code -ne 0 ] || [ $code -ne 130 ]; then
+if [ "$code" -ne 0 ] || [ "$code" -ne 130 ]; then
     echo "SSH connection failed. Waiting for ip query"
     query_wait
     echo "trying connection again"
