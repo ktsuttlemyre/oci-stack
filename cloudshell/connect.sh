@@ -1,6 +1,6 @@
 #!/bin/bash
 connect () {
-        key="$HOME/.ssh/$USERNAME"
+        key="$HOME/.ssh/$(whoami)"
         if [ ! -f "$key" ]; then
                 echo "Need to add a ssh key to $key"
                 return 1
