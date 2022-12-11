@@ -183,7 +183,7 @@ write_files:
     content: ${base64encode(join("\n",concat(["#!/bin/bash -ex"],[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)])))}
 #    owner: "root:root"
     path: "/root/init_script.sh"
-#  permissions: '0644'
+    permissions: '0755'
 EOF
     )	  	  
   }
@@ -258,7 +258,7 @@ write_files:
     content: ${base64encode(join("\n",concat(["#!/bin/bash -ex"],[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**ampere**") : file(fn)])))}
 #    owner: "root:root"
     path: "/root/init_script.sh"
-#  permissions: '0644'
+    permissions: '0755'
 EOF
     )	  
   }
