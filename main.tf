@@ -291,7 +291,7 @@ EOF
   source_details {
     source_id               = data.oci_core_images.that.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = 100
+    boot_volume_size_in_gbs = var.number_of_micros == 1 ? 150 : 100
   }
 
   lifecycle {
