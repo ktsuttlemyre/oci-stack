@@ -313,30 +313,32 @@ resource "oci_core_public_ip" "that" {
 }
 
 resource "oci_core_volume_backup_policy" "this" {
-  count = 3
+  count = 2
 
   compartment_id = oci_identity_compartment.this.id
 
-  display_name = format("Daily %d", count.index)
+  display_name = format("Monthly backup for %s", count.index?"Ampere":"Mini")
 
   schedules {
-    backup_type       = "INCREMENTAL"
-    hour_of_day       = count.index
+    backup_type       = "FULL"
+    hour_of_day       = count.index*4
     offset_type       = "STRUCTURED"
-    period            = "ONE_WEEK"
-    day_of_week         = "MONDAY"
-    retention_seconds = 601200
+    period            = "ONE_MONTH"
+#    day_of_week       = "MONDAY"
+    day_of_month      = 1
+    retention_seconds = 4380480 #keep it for a month and 2/3 (average month = 2628288 sec) + (average month*2/3 = 1752192 sec)
     time_zone         = "REGIONAL_DATA_CENTER_TIME"
   }
 }
 
 resource "oci_core_volume_backup_policy_assignment" "this" {
-  count = 3
+  count = 2
 
   asset_id = (
-    count.index < 2 ?
-    oci_core_instance.this[count.index].boot_volume_id :
-    oci_core_instance.that.boot_volume_id
+    count.index == 1 ?
+    oci_core_instance.that.boot_volume_id :
+    oci_core_instance.this[count.index].boot_volume_id
+    
   )
   policy_id = oci_core_volume_backup_policy.this[count.index].id
 }
