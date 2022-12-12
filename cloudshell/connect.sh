@@ -34,10 +34,10 @@ query_wait (){
         #extract ips
         # get ampere ip
         cat $TMP_FILE | jq ".resources" | grep "ip_address" | cut -d '"' -f 4 | tail -1 > ~/instances/ampere
-        #get mini ip
-        cat $TMP_FILE | jq -r '.resources[] | select(.type == "oci_core_instance") | .instances[] | select(.attributes.create_vnic_details[].hostname_label == "mini-1") | .attributes.public_ip' > ~/instances/mini-1
-        #get mini 2 ip
-        cat $TMP_FILE | jq -r '.resources[] | select(.type == "oci_core_instance") | .instances[] | select(.attributes.create_vnic_details[].hostname_label == "mini-2") | .attributes.public_ip' > ~/instances/mini-2
+        #get Micro ip
+        cat $TMP_FILE | jq -r '.resources[] | select(.type == "oci_core_instance") | .instances[] | select(.attributes.create_vnic_details[].hostname_label == "micro-1") | .attributes.public_ip' > ~/instances/micro-1
+        #get Micro 2 ip
+        cat $TMP_FILE | jq -r '.resources[] | select(.type == "oci_core_instance") | .instances[] | select(.attributes.create_vnic_details[].hostname_label == "micro-2") | .attributes.public_ip' > ~/instances/micro-2
     fi
     return $FAIL
 }
