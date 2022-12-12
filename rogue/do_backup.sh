@@ -2,12 +2,11 @@
 #expect root to run this in home directory
 # https://help.ubuntu.com/community/BackupYourSystem/TAR
 # $1 = BACKUPNAME
-  GNU nano 5.4                                                   test.sh *                                                          
-#!/bin/bash
-
 
 declare -A ARGUMENTS=( [name]=system_root [path]=/ )
 
+name="system_root"
+path="/"
 
 #VARS="`set -o posix ; set`";
 #      arguments      #
