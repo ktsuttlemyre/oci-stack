@@ -380,3 +380,11 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 #     name = "Instance-secret-management"
 #     statements = ["Allow dynamic-group 'Default'/'instances_group' to use secret-family in tenancy"]
 # }
+
+#might cause some issues if my month math is off for the backup_policy
+resource "oci_core_volume_backup" "this" {
+    #Required
+    volume_id = oci_core_instance.ampere.boot_volume_id
+    display_name = "Ampere clean rollback"
+    type = "FULL"
+}
