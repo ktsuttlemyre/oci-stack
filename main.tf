@@ -326,7 +326,7 @@ resource "oci_core_volume_backup_policy" "this" {
 
   compartment_id = oci_identity_compartment.this.id
 
-  display_name = format("Monthly backup for %s", count.index?"Ampere":"Micro")
+  display_name = format("Monthly backup for %s", count.index == 1 ? "Ampere" : "Micro")
 
   schedules {
     backup_type       = "FULL"
