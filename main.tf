@@ -335,7 +335,7 @@ resource "oci_core_volume_backup_policy" "this" {
     period            = "ONE_MONTH"
 #    day_of_week       = "MONDAY"
     day_of_month      = 1
-    retention_seconds = 4380480 #keep it for a month and 2/3 (average month = 2628288 sec) + (average month*2/3 = 1752192 sec)
+    retention_seconds = 4752000 #keep it for 2months-1day (28+27) must be a multiple of 3600
     time_zone         = "REGIONAL_DATA_CENTER_TIME"
   }
 }
