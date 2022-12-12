@@ -148,8 +148,7 @@ server {
 #}
 
 
-#!/bin/bash
-
+# https://askubuntu.com/questions/58575/add-lines-to-cron-from-script
 line="* * * * * /path/to/command"
 (crontab -u $(whoami) -l; echo "$line" ) | crontab -u $(whoami) -
 
