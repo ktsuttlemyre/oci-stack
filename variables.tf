@@ -25,12 +25,12 @@ variable "ssh_public_key" {
   type        = string
 }
 
-variables "skip_init_scripts" {
+variable "skip_init_scripts" {
   description = "If blank then run user-data" 
   type        = string
 }
 
-variables "number_of_micros" {
+variable "number_of_micros" {
   description = "1 or 2" 
   type        = number
   default     = 1
