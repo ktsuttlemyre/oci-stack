@@ -126,7 +126,7 @@ systemctl enable $servicename
 
 apt-get install nginx
 
-
+#https://stackoverflow.com/questions/21064401/route-different-proxy-based-on-subdomain-request-in-nginx
 server {
   server_name sub1.example.com;
   location / {
@@ -139,6 +139,13 @@ server {
     proxy_pass http://127.0.0.1:xxxx;
   }
 }
+#server {
+#    server_name   ~^(www\.)?(?<domain>.+)$;
+
+#    location / {
+#        root   /sites/$domain;
+#    }
+#}
 
 
 #!/bin/bash
