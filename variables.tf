@@ -28,6 +28,7 @@ variable "ssh_public_key" {
 variable "skip_init_scripts" {
   description = "If blank then run user-data" 
   type        = string
+  default     = ""
 }
 
 variable "number_of_micros" {
