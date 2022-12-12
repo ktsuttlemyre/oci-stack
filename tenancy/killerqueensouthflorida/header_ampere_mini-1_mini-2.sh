@@ -3,6 +3,12 @@
 #https://cloudinit.readthedocs.io/en/latest/topics/examples.html
 echo "Hello, this is a $(hostname) init script. If you are seeing this then the init script has started!" | tee > /init.log
 
+cd /root
+apt-get install -y bup
+bup index --one-file-system --exclude="/root/.bup" /
+bup save --name system_init /
+
+
 user_admin="ubuntu"
 user_app="app"
 
