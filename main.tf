@@ -150,8 +150,8 @@ data template_file "user_data" {
 }
 
 
-resource "oci_core_instance" "this" {
-  count = 2
+resource "oci_core_instance" "micro" {
+  count = var.number_of_micros
 
   availability_domain = local.availability_domain_micro
   compartment_id      = oci_identity_compartment.this.id
@@ -300,7 +300,7 @@ EOF
 }
 
 data "oci_core_private_ips" "that" {
-  ip_address = oci_core_instance.that.private_ip
+  ip_address = oci_core_instance.ampere.private_ip
   subnet_id  = oci_core_subnet.this.id
 }
 
@@ -308,7 +308,7 @@ resource "oci_core_public_ip" "that" {
   compartment_id = oci_identity_compartment.this.id
   lifetime       = "RESERVED"
 
-  display_name  = oci_core_instance.that.display_name
+  display_name  = oci_core_instance.ampere.display_name
   private_ip_id = data.oci_core_private_ips.that.private_ips.0.id
 }
 
@@ -336,8 +336,8 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 
   asset_id = (
     count.index == 1 ?
-    oci_core_instance.that.boot_volume_id :
-    oci_core_instance.this[count.index].boot_volume_id
+    oci_core_instance.ampere.boot_volume_id :
+    oci_core_instance.micro[count.index].boot_volume_id
     
   )
   policy_id = oci_core_volume_backup_policy.this[count.index].id
