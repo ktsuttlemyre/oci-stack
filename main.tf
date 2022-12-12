@@ -236,7 +236,7 @@ data "oci_core_images" "that" {
   state                    = "available"
 }
 
-resource "oci_core_instance" "that" {
+resource "oci_core_instance" "ampere" {
   availability_domain = data.oci_identity_availability_domains.this.availability_domains.0.name
   compartment_id      = oci_identity_compartment.this.id
   shape               = local.shapes.flex
