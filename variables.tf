@@ -29,3 +29,11 @@ variables "skip_init_scripts" {
   description = "If blank then run user-data" 
   type        = string
 }
+
+variables "number_of_micros" {
+  description = "1 or 2" 
+  type        = number
+  default     = 1
+}
+
+
