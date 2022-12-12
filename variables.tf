@@ -25,7 +25,7 @@ variable "ssh_public_key" {
   type        = string
 }
 
-variables "run_init_scripts" {
+variables "skip_init_scripts" {
   description = "If blank then run user-data" 
   type        = string
 }
