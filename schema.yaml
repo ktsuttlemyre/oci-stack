@@ -19,3 +19,6 @@ variables:
   cidr_block:
     title: VCN CIDR Block
     description: The CIDR block of the VCN created for the compute instance
+  run-user-data:
+    title: Should user-data run?
+    description: leave empty to run user data. Otherwise type "stop" to have a blank stack deploy
