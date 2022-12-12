@@ -6,7 +6,7 @@ echo "Hello, this is a $(hostname) init script. If you are seeing this then the 
 cd /root
 apt-get install -y bup
 bup index --one-file-system --exclude="/root/.bup" /
-bup save --name system_init /
+bup save --name clean_system /
 
 
 user_admin="ubuntu"
