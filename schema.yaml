@@ -22,3 +22,6 @@ variables:
   skip_init_scripts:
     title: Should init scripts run?
     description: Leave empty to run init scripts. Otherwise type "stop" to have a blank stack deploy.
+  number_of_micros:
+    title: Number of micro instances (1 or 2)
+    description: choose how many micro instances you want. If you choose 1 you will get 150gb storage on Ampere otherwise 100 (p.s. no backups on micro-2) 
