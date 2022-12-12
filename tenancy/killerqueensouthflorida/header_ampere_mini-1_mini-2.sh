@@ -3,16 +3,20 @@
 #https://cloudinit.readthedocs.io/en/latest/topics/examples.html
 echo "Hello, this is a $(hostname) init script. If you are seeing this then the init script has started!" | tee > /init.log
 
+user_admin="ubuntu"
+user_app="app"
+
+
 #sudo user
 #disable ubuntu firewall
 command -v ufw > /dev/null && ufw disable
 
 
-#go to admin user ubuntu
+# run as admin user
 ##############################
-####     USER  UBUNTU     ####
+####     USER  admin      ####
 ##############################
-sudo -i -u ubuntu bash << EOF
+sudo -i -u "$admin_user" bash << EOF
 
 # install oci cli
 curl -L -o /run/oci/oci_install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
@@ -25,12 +29,12 @@ chmod +x /run/oci/oci_install.sh
 #let OCI_CLI_AUTH 'instance_principal'
 EOF
 
-#purposely end and restart the ubuntu user session here
+#purposely end and restart the admin user session here
 #refresh shell so we can use oci cli
 ##############################
-####     USER  UBUNTU     ####
+####     USER  admin      ####
 ##############################
-sudo -i -u ubuntu bash << EOF
+sudo -i -u "$user_admin" bash << EOF
 #write config to disk from envoronment variable
 echo "$OCI_CONFIG" | base64 -d | tar -xz
 oci setup repair-file-permissions –file ~/.oci/oci_api.pem
@@ -70,8 +74,8 @@ cat > cloudflare-ddns/config.json <<-'EOF1'
 
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
-#Add ubuntu to the docker group to avoid needing sudo to run the docker command:
-sudo usermod -aG docker $USERNAME 
+#Add admin_user to the docker group to avoid needing sudo to run the docker command:
+sudo usermod -aG docker $admin_user 
 EOF
 ##############################
 ####     USER  ROOT     ####
@@ -87,6 +91,7 @@ BOOTSCRIPT=$(cat <<-END
 		-p 8080:8080 -p 8181:8181 \
 		-p 1935:1935 -p 1936:1936 \
 		-p 6000:6000/udp \
+		--user "$user_app"\
 		datarhei/restreamer:latest
 END
 )
