@@ -1,3 +1,12 @@
+variable "total_storage" {
+  type    = number
+  default = 200
+}
+
+variable "minimum_bootvolume_size" {
+  type    = number
+  default = 50
+}
 
 data "oci_identity_tenancy" "tenancy" {
     #Required
@@ -291,8 +300,8 @@ EOF
   source_details {
     source_id               = data.oci_core_images.that.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = 100 + (50*var.number_of_micros)
-  }
+    boot_volume_size_in_gbs = var.total_storage - (var.minimum_bootvolume_size * var.number_of_micros)
+  }   
 
   lifecycle {
     ignore_changes = [source_details.0.source_id]
