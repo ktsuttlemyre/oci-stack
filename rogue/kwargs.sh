@@ -38,6 +38,8 @@ vartype() {
 
 args="${@}"
 ARGUMENTS=$1
+#next line is a hack
+unset 'ARGUMENTS[0]'
 echo "all script args ${@}"
 echo "all incoming parameter values ${args[@]}"
 echo "accepted agruments ${!ARGUMENTS[@]}"
@@ -73,13 +75,14 @@ opts=$(getopt \
 if [ $? -ne 0 ]; then
   exit 1
 fi
-echo "here"
+#//todo try to remove eval
 eval set --$opts
 
 echo "opts ==== ${opts[@]}"
 
 while [[ $# -gt 0 ]]; do
   echo "looking at $1 with $2 arguments ${!ARGUMENTS[@]}"
+  #//todo next line is a hack
   if [ "$1" == "--" ]; then
      shift 2
      continue
