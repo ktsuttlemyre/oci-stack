@@ -385,6 +385,6 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 resource "oci_core_volume_backup" "this" {
     #Required
     volume_id = oci_core_instance.ampere.boot_volume_id
-    display_name = "Ampere clean rollback"
+    display_name = "Ampere clean system rollback"
     type = "FULL"
 }
