@@ -291,7 +291,7 @@ EOF
   source_details {
     source_id               = data.oci_core_images.that.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = var.number_of_micros == 1 ? 150 : 100
+    boot_volume_size_in_gbs = 100 + (50*var.number_of_micros)
   }
 
   lifecycle {
@@ -313,7 +313,7 @@ resource "oci_core_public_ip" "that" {
 }
 
 resource "oci_core_volume_backup_policy" "this" {
-  count = 2
+  count = var.number_of_micros >= 1 ? 2 : 1 # don't backup micro-2
 
   compartment_id = oci_identity_compartment.this.id
 
@@ -332,7 +332,7 @@ resource "oci_core_volume_backup_policy" "this" {
 }
 
 resource "oci_core_volume_backup_policy_assignment" "this" {
-  count = 2
+  count = var.number_of_micros >= 1 ? 2 : 1 # don't backup micro-2
 
   asset_id = (
     count.index == 1 ?
