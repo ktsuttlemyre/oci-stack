@@ -145,7 +145,7 @@ data template_file "user_data" {
 #    packages           = jsonencode(var.packages)
     vault              = data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id
     oci_config         = data.oci_secrets_secretbundle.this.secret_bundle_content[0].content
-    init_script        = join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-1**") : file(fn)])
+    init_script        = join("\n",[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**micro-1**") : file(fn)])
   }
 }
 
@@ -157,7 +157,7 @@ resource "oci_core_instance" "this" {
   compartment_id      = oci_identity_compartment.this.id
   shape               = local.shapes.micro
 
-  display_name         = format("Mini %d", count.index + 1)
+  display_name         = format("Micro %d", count.index + 1)
   preserve_boot_volume = false
 
   metadata = {
@@ -181,7 +181,7 @@ runcmd:
   - "bash /root/init_script.sh"
 write_files:
   - encoding: b64
-    content: ${base64encode(join("\n",concat(["#!/bin/bash -ex"],[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**mini-${count.index + 1}**") : file(fn)])))}
+    content: ${base64encode(join("\n",concat(["#!/bin/bash -ex"],[for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/**micro-${count.index + 1}**") : file(fn)])))}
 #    owner: "root:root"
     path: "/root/init_script.sh"
     permissions: '0755'
@@ -200,8 +200,8 @@ EOF
   }
 
   create_vnic_details {
-    display_name     = format("Mini %d", count.index + 1)
-    hostname_label   = format("mini-%d", count.index + 1)
+    display_name     = format("Micro %d", count.index + 1)
+    hostname_label   = format("micro-%d", count.index + 1)
     nsg_ids          = [oci_core_network_security_group.this.id]
     subnet_id        = oci_core_subnet.this.id
   }
@@ -317,7 +317,7 @@ resource "oci_core_volume_backup_policy" "this" {
 
   compartment_id = oci_identity_compartment.this.id
 
-  display_name = format("Monthly backup for %s", count.index?"Ampere":"Mini")
+  display_name = format("Monthly backup for %s", count.index?"Ampere":"Micro")
 
   schedules {
     backup_type       = "FULL"
