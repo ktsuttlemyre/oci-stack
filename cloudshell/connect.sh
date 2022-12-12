@@ -5,7 +5,7 @@ connect () {
                 echo "Need to add a ssh key to $key"
                 return 1
         fi
-        ssh -o ConnectTimeout=10 "ubuntu@$(<~/instances/$INSTANCE)" -i "$key"
+        ssh -o ConnectTimeout=10 ubuntu@$(<~/instances/$INSTANCE) -i $key
         
 }
 
