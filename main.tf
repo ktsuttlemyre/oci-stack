@@ -185,7 +185,7 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
-  - "var AMPERE_PRIVATE_IP ${oci_core_instance.ampere.private_ip}"
+  - "var AMPERE_PRIVATE_IP ${data.oci_core_private_ips.that.private_ips.0.ip_address}"
   - "var AMPERE_PUBLIC_IP \"\""
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
@@ -263,7 +263,7 @@ runcmd:
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
 %{ for i in range(var.number_of_micros) ~}
-  - "var MICRO${i+1}_PRIVATE_IP ${oci_core_instance.micro[i].private_ip}"
+  - "var MICRO${i+1}_PRIVATE_IP ${data.oci_core_private_ips.this.private_ips[i].ip_address}"
   - "var MICRO${i+1}_PUBLIC_IP \"\""
 %{ endfor ~}
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "	    
@@ -314,11 +314,16 @@ EOF
   }
 }
 
+data "oci_core_private_ips" "this" {
+  count = var.number_of_micros
+  ip_address = oci_core_instance.this[count+1].private_ip
+}
+	
 data "oci_core_private_ips" "that" {
   ip_address = oci_core_instance.ampere.private_ip
   subnet_id  = oci_core_subnet.this.id
 }
-
+	
 resource "oci_core_public_ip" "that" {
   compartment_id = oci_identity_compartment.this.id
   lifetime       = "RESERVED"
