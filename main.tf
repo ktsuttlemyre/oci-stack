@@ -393,10 +393,10 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 # }
 
 #might cause some issues if my month math is off for the backup_policy
-resource "oci_core_volume_backup" "this" {
+resource "oci_core_boot_volume_backup" "this" {
     #Required
     volume_id = oci_core_instance.ampere.boot_volume_id
     display_name = "Ampere clean system rollback"
     type = "FULL"
-    depends_on =[oci_core_volume_backup_policy_assignment.this, oci_core_volume_backup_policy.this, oci_core_instance.ampere]
+    #depends_on =[oci_core_volume_backup_policy_assignment.this, oci_core_volume_backup_policy.this, oci_core_instance.ampere]
 }
