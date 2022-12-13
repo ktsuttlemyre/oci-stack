@@ -50,7 +50,7 @@ echo "name $name path $path"
 #be sure to exclude mountpoints
 #see --one-file-system argument here
 #https://help.ubuntu.com/community/BackupYourSystem/TAR
-exclude_mounts=$(/proc/mounts | cut -d" " -f 2 | awk '{print " --exclude=" $0}' | tr -d "\n")
+exclude_mounts=$(cat /proc/mounts | cut -d" " -f 2 | awk '{print " --exclude=" $0}' | tr -d "\n")
 exclude_systems="--exclude=/dev --exclude=/proc --exclude=/sys --exclude=/tmp/ --exclude=/run/ --exclude=/mnt/ --exclude=/media/ --exclude=/lost+found"
 bup index --one-file-system --exclude="/root/.bup" $exclude_mounts $exclude_systems $path
 bup save --name "$name" $path
