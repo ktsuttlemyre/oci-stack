@@ -37,4 +37,12 @@ variable "number_of_micros" {
   default     = 1
 }
 
+variable "use_all_storage" {
+  description = "1 or 2" 
+  type        = boolean
+  default     = false
+}
+
+
+
 
