@@ -306,7 +306,7 @@ EOF
   source_details {
     source_id               = data.oci_core_images.that.images.0.id
     source_type             = "image"
-    boot_volume_size_in_gbs = var.total_storage - (var.minimum_bootvolume_size * var.number_of_micros)
+    boot_volume_size_in_gbs = var.use_all_storage ? var.total_storage - (var.minimum_bootvolume_size * var.number_of_micros) : 100
   }   
 
   lifecycle {
