@@ -17,7 +17,7 @@ var(){
 		declare -xg $1="$2"
 		source = "export $1='$2'"
 	fi
-	echo "$source" | tee -a /root/.profile /home/ubuntu/.profile
+	echo "$source" | tee -a /root/.profile /home/$(whoami)/.profile
 }
 
 change_user () {
