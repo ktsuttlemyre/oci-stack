@@ -70,3 +70,7 @@ oci setup repair-file-permissions --file ~/.oci/config
 
 To create a base64 string for saving to the vault use
 `tar -zc .oci | base64 -w0 > OCI_CONFIG.base64`
+
+
+To create a login ssh key (not api key) use
+ `sh-keygen -t rsa -b 4096 -C "user@gmail.com"`
