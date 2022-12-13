@@ -187,6 +187,8 @@ runcmd:
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
   - "var AMPERE_PRIVATE_IP ${data.oci_core_private_ips.that.private_ips.0.ip_address}"
   - "var AMPERE_PUBLIC_IP \"\""
+  # https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
+  - "sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf"
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
   - "bash /root/init_script.sh"
@@ -262,6 +264,8 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+  # https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
+  - "sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf"
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
 #  - "cd $HOME"
