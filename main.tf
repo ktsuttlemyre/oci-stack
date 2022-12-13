@@ -398,5 +398,5 @@ resource "oci_core_volume_backup" "this" {
     volume_id = oci_core_instance.ampere.boot_volume_id
     display_name = "Ampere clean system rollback"
     type = "FULL"
-    depends_on =[oci_core_volume_backup_policy_assignment.this, oci_core_instance.ampere]
+    depends_on =[oci_core_volume_backup_policy_assignment.this, oci_core_volume_backup_policy.this, oci_core_instance.ampere]
 }
