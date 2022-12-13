@@ -5,15 +5,15 @@ echo "Hello, this is a $(hostname) init script. If you are seeing this then the 
 
 cd /root
 
-user_admin="ubuntu"
-user_app="app"
+user_admin=ubuntu
+user_app=app
 
 
 # run as admin user
 ##############################
 ####     USER  admin      ####
 ##############################
-sudo -i -u ubuntu bash << EOF
+sudo -i -u $admin_user bash << 'EOF'
 echo "Running as $(whoami)"
 cd ~
 echo "Installing OCI CLI"
@@ -24,19 +24,8 @@ chmod +x oci_install.sh
 #https://database-heartbeat.com/2021/10/05/auth-cli/
 #depricated this was when we used policies
 #set permanant
-#let OCI_CLI_AUTH 'instance_principal'
-echo "loging off $(whoami)"
-EOF
-echo "now root user $(whoami)"
+#var OCI_CLI_AUTH 'instance_principal'
 
-#purposely end and restart the admin user session here
-#refresh shell so we can use oci cli
-##############################
-####     USER  admin      ####
-##############################
-sudo -i -u ubuntu bash << EOF
-echo "Running as $(whoami)"
-cd ~
 #write config to disk from envoronment variable
 echo "$OCI_CONFIG" | base64 -d | tar -xz
 chmod 600 "$HOME/.oci/oci_api.pem"
@@ -45,20 +34,17 @@ echo "loging off $(whoami)"
 EOF
 echo "now root user $(whoami)"
 
-
 echo "Installing bup and creating a savestate" 
 apt-get install -y bup
 bup init
 bup index --one-file-system --exclude="/root/.bup" /
 bup save --name clean_system_rollback /
 
-
 echo "Customizing system"
 #disable ubuntu firewall
 command -v ufw > /dev/null && ufw disable
 
-
-sudo -i -u "$admin_user" bash << EOF
+sudo -i -u $admin_user bash << 'EOF'
 echo "Running as $admin_user $(whoami)"
 #get secret
 CLOUDFLARE_TOKEN=SECRET CLOUDFLARE_TOKEN
@@ -67,7 +53,7 @@ CLOUDFLARE_ZONEID=SECRET CLOUDFLARE_ZONEID
 #install DDNS for cloudflare
 #https://github.com/timothymiller/cloudflare-ddns
 got "timothymiller" "cloudflare-ddns"
-cat > cloudflare-ddns/config.json <<-'EOF1'
+cat > cloudflare-ddns/config.json <<-EOF1
 	{
 	  "cloudflare": [
 	    {
@@ -120,7 +106,7 @@ END
 BOOTSCRIPT_PATH=/root/boot.sh
 servicename=customboot
 
-cat > $BOOTSCRIPT_PATH <<-'EOF'
+cat > $BOOTSCRIPT_PATH <<-EOF
 	#!/usr/bin/env bash
 	echo "$BOOTSCRIPT_PATH ran at \$(date)!" > /tmp/it-works
 	"$BOOTSCRIPT"
@@ -128,7 +114,7 @@ EOF
 
 chmod +x $bootscript
 
-cat > /etc/systemd/system/$servicename.service <<-'EOF'
+cat > /etc/systemd/system/$servicename.service <<-EOF
 	[Service]
 	ExecStart=$bootscript
 	[Install]
