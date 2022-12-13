@@ -316,7 +316,7 @@ EOF
 
 data "oci_core_private_ips" "this" {
   count = var.number_of_micros
-  ip_address = oci_core_instance.this[count+1].private_ip
+  ip_address = oci_core_instance.micro[count+1].private_ip
 }
 	
 data "oci_core_private_ips" "that" {
