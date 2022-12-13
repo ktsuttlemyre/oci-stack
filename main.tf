@@ -262,10 +262,10 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
-#%{ for i in range(var.number_of_micros) ~}
+#{ for i in range(var.number_of_micros) ~}
 #  - "var MICRO${i+1}_PRIVATE_IP ${data.oci_core_private_ips.this.private_ips[i].ip_address}"
 #  - "var MICRO${i+1}_PUBLIC_IP \"\""
-#%{ endfor ~}
+#{ endfor ~}
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "	    
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
 #  - "cd $HOME"
