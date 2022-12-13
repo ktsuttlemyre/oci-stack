@@ -185,6 +185,8 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+  - "var AMPERE_PRIVATE_IP ${oci_core_instance.ampere.private_ip}"
+  - "var AMPERE_PUBLIC_IP \"\""
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
   - "bash /root/init_script.sh"
@@ -260,9 +262,13 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"$1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+%{ for i in range(var.number_of_micros) ~}
+  - "var MICRO${i+1}_PRIVATE_IP ${oci_core_instance.micro[i].private_ip}"
+  - "var MICRO${i+1}_PUBLIC_IP \"\""
+%{ endfor ~}
+  - "[ \"${var.skip_init_scripts}\" ] && exit 0 "	    
 #  - "(( $EUID != 0 )) && echo \"Run this script as root\" && exit"
 #  - "cd $HOME"
-  - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
   - "bash /root/init_script.sh"
 write_files:
   - encoding: "b64"
