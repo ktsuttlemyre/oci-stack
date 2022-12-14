@@ -24,6 +24,9 @@ resource "oci_identity_compartment" "this" {
   enable_delete = true
 }
 
+
+# a better network example can be found here
+# https://github.com/chadgeary/cloudblock/blob/49ae482df88bc08303b5bfddddf6d576906320a9/oci/oci-network.tf
 resource "oci_core_vcn" "this" {
   compartment_id = oci_identity_compartment.this.id
 
