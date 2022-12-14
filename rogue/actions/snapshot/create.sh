@@ -42,6 +42,16 @@ done
 echo "name $name path $path"
 
 
+######TODO add user home directories that can login
+# user_data=$(getent passwd)
+# if [ -z "$var" ]; then
+#   user_data=$(cat /etc/passwd)
+# fi
+# list_user_dirs=($(echo "$user_data" | grep  -v "/bin/false" | grep -v "/usr/sbin/nologin" | grep -v "/bin/sync" | cut -d: -f6))
+
+#TODO create hash of users above and their home directores and make a bup branch for each so we can allow users to use backups for their home
+
+
 #make space
 #ls -1tr | head -n -10 | xargs -d '\n' rm -f --
 #make backup
