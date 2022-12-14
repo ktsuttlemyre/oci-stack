@@ -41,8 +41,8 @@ done
 
 echo "name $name path $path"
 
-
-######TODO add user home directories that can login
+##################################################
+######TODO exclude user home directories that can login and make them their own branch
 # user_data=$(getent passwd)
 # if [ -z "$var" ]; then
 #   user_data=$(cat /etc/passwd)
@@ -50,6 +50,42 @@ echo "name $name path $path"
 # list_user_dirs=($(echo "$user_data" | grep  -v "/bin/false" | grep -v "/usr/sbin/nologin" | grep -v "/bin/sync" | cut -d: -f6))
 
 #TODO create hash of users above and their home directores and make a bup branch for each so we can allow users to use backups for their home
+
+################Use package manager to handle binaries#######
+#TODO optomization to not track common binaries and use package manager to handle this
+#binaries are not easily compressed so removing them will make smaller backup images
+#TODO use mpm to create snapshots of installed packages
+#https://github.com/kdeldycke/meta-package-manager
+#mpm backup
+
+#TODO ask package manager to list what files it is tracking and ignore those
+#https://www.makeuseof.com/apt-vs-dpkg/
+#apps=$(apt list --installed)
+#all_apt_tracked_files=()
+#candidate_files=()
+#for [ app in apps ]; do
+  # https://askubuntu.com/questions/408784/after-doing-a-sudo-apt-get-install-app-where-does-the-application-get-stored
+
+  # collapse file lists into directories
+  # https://superuser.com/questions/805306/how-to-find-the-common-paths-from-a-list-of-paths-files
+#  files=$(dpkg -L $app)
+# all_apt_tracked_files concatinate files
+#done
+#simplify list
+#https://superuser.com/questions/805306/how-to-find-the-common-paths-from-a-list-of-paths-files
+#list_of_common_apt_tracked_dirs = $(perl -lne 'BEGIN { $l="\n"; }; if ($_ !~ /^\Q$l/) { print $_; $l = $_; }')
+#the above command tells us where apt tracked files are so even if a package manager installed something to a weird location outside /usr we will find it
+
+# make a diff of files that exist vs files that are tracked
+
+#for[list_of_common_apt_tracked_dirs in dir ]; then
+# candidate_files+= $(find $dir)
+
+#candidate_files uniq
+
+# finally tell bup to ignore files that are 100% being tracked by package manager
+# tough problem?
+
 
 
 #make space
