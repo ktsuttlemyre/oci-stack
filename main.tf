@@ -60,7 +60,7 @@ resource "oci_core_default_security_list" "this" {
 
   dynamic "ingress_security_rules" {
     # ports 8080, 8181, 1935, 1936, 6000\udp
-    for_each = [22, 80, 443, 8080, 8181, 1935, 1936, 6000]
+    for_each = [22, 80, 443]
     iterator = port
     content {
       protocol = "all" #local.protocol_number.tcp
