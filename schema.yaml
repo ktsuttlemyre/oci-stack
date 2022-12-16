@@ -27,4 +27,4 @@ variables:
     description: choose how many micro instances you want. If you choose 1 you will get 150gb storage on Ampere otherwise 100 (p.s. no backups on micro-2) 
   use_all_storage:
     title: Use all free tier storage
-    description: Always free tier gets 200 max storage space. Would you like for the Ampere instance to use all the available storage? note: each micro instance needs 50 gb
+    description: Always free tier gets 200 max storage space. Would you like for the Ampere instance to use all the available storage? Note - each micro instance needs 50 gb
