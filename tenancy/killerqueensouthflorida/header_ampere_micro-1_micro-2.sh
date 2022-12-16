@@ -90,15 +90,7 @@ EOF
 ####################
 #  Create Service  #
 BOOTSCRIPT=$(cat <<-END
-	# https://docs.datarhei.com/restreamer/getting-started/quick-start
-	docker run -d --restart=always --name restreamer \
-		-v /opt/restreamer/config:/core/config \
-		-v /opt/restreamer/data:/core/data \
-		-p 8080:8080 -p 8181:8181 \
-		-p 1935:1935 -p 1936:1936 \
-		-p 6000:6000/udp \
-		--user "$user_app"\
-		datarhei/restreamer:latest
+	docker-compose up
 END
 )
 
@@ -124,28 +116,46 @@ cat > /etc/systemd/system/$servicename.service <<-EOF
 systemctl enable $servicename
 
 
-apt-get install nginx
+version: '3.3'
 
-#https://stackoverflow.com/questions/21064401/route-different-proxy-based-on-subdomain-request-in-nginx
-server {
-  server_name sub1.example.com;
-  location / {
-    proxy_pass http://127.0.0.1:xxxx;
-  }
-}
-server {
-  server_name sub2.example.com;
-  location / {
-    proxy_pass http://127.0.0.1:xxxx;
-  }
-}
-#server {
-#    server_name   ~^(www\.)?(?<domain>.+)$;
+services:
+  reverse-proxy:
+    restart: always
+    container_name: reverse-proxy
+    # The official v2 Traefik docker image
+    image: traefik:v2.9
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+	# https://docs.datarhei.com/restreamer/getting-started/quick-start
+  restreamer:
+      restart: always
+      container_name: restreamer
+      volumes:
+          - '/opt/restreamer/config:/core/config'
+          - '/opt/restreamer/data:/core/data'
+      ports:
+          - '8080:8080'
+          - '8181:8181'
+          - '1935:1935'
+          - '1936:1936'
+          - '6000:6000/udp'
+      image: 'datarhei/restreamer:latest'
+      labels:
+        - "traefik.http.routers.whoami.rule=Host(`restreamer.localhost`)"
+	- traefik.http.routers.cam1.rule=Host(cam1.domain.com)
+	- traefik.http.routers.cam1.tls=true
+	- traefik.http.routers.cam1.tls.certresolver=lets-encrypt
+	- traefik.port=8080
 
-#    location / {
-#        root   /sites/$domain;
-#    }
-#}
 
 
 # https://askubuntu.com/questions/58575/add-lines-to-cron-from-script
