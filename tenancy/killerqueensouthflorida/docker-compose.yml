@@ -1,0 +1,53 @@
+version: '3.3'
+
+services:
+  reverse-proxy:
+    restart: always
+    container_name: reverse-proxy
+    # The official v2 Traefik docker image
+    image: traefik:v2.9
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.streaming.address=:6000/udp"
+      #not doing this currently but see
+      #https://github.com/realtarget/traefik2-docker-stack/issues/7
+#      - "--entrypoints.ssh.address=:23"
+    ports:
+      # HTTP port
+      - "80:80"
+      # HTTPs port
+      - "443:443"
+      # Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+      # Streaming bind
+      - "6000:6000/udp"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock 
+  # https://docs.datarhei.com/restreamer/getting-started/quick-start
+  restreamer:
+      restart: unless-stopped
+      container_name: restreamer
+      volumes:
+          - '/opt/restreamer/config:/core/config'
+          - '/opt/restreamer/data:/core/data'
+      image: 'datarhei/restreamer:latest'
+      labels:
+        - "traefik.enable=true"
+
+        - "traefik.http.routers.restreamer_web.rule=Host(`restreamer.${DOMAIN}`)"
+        - "traefik.http.routers.restreamer_web.entrypoints=web"
+        - "traefik.http.routers.restreamer_web.service=svc_restreamer_web"
+#        - "traefik.http.routers.restreamer_web.tls=true"
+#        - "traefik.http.routers.restreamer_web.tls.certresolver=lets-encrypt"
+        - "traefik.http.services.svc_restreamer_web.loadbalancer.server.port=80"
+
+        - "traefik.udp.routers.restreamer_srt.rule=Host(`srt.${DOMAIN}`)"
+        - "traefik.udp.routers.restreamer_srt.entrypoints=stream"
+        - "traefik.udp.routers.restreamer_srt.service=svc_restreamer_srt"
+        - "traefik.udp.services.svc_restreamer_srt.loadbalancer.server.port=6000"
