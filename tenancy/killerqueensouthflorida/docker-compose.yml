@@ -1,25 +1,32 @@
 version: '3.3'
+#run this with docker-compose up -d
+#more info can be found
+# https://doc.traefik.io/traefik/user-guides/docker-compose/acme-tls/
 
 services:
-  reverse-proxy:
+  traefik:
     restart: always
-    container_name: reverse-proxy
+    container_name: traefik
     # The official v2 Traefik docker image
     image: traefik:v2.9
     # Enables the web UI and tells Traefik to listen to docker
     command:
-      - "--api.insecure=true"
+      #- "--log.level=DEBUG"
+      - "--dashboard=true"
+      - "--api.insecure=false"
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:443"
       - "--entrypoints.streaming.address=:6000/udp"
+      - "--certificatesresolvers.cert_resolver.acme.tlschallenge=true"
+      #- "--certificatesresolvers.cert_resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.cert_resolver.acme.email=killerqueensouthflorida@gmail.com"
+      - "--certificatesresolvers.cert_resolver.acme.storage=/letsencrypt/acme.json"
+
       #not doing this currently but see
       #https://github.com/realtarget/traefik2-docker-stack/issues/7
 #      - "--entrypoints.ssh.address=:23"
     ports:
-      # HTTP port
-      - "80:80"
       # HTTPs port
       - "443:443"
       # Web UI (enabled by --api.insecure=true)
@@ -27,8 +34,19 @@ services:
       # Streaming bind
       - "6000:6000/udp"
     volumes:
+      - "./letsencrypt:/letsencrypt"
       # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock 
+      - /var/run/docker.sock:/var/run/docker.sock:ro 
+    # Dynamic Configuration
+    labels:
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.example.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"
+
+
+
+
   # https://docs.datarhei.com/restreamer/getting-started/quick-start
   restreamer:
       restart: unless-stopped
@@ -51,3 +69,11 @@ services:
         - "traefik.udp.routers.restreamer_srt.entrypoints=stream"
         - "traefik.udp.routers.restreamer_srt.service=svc_restreamer_srt"
         - "traefik.udp.services.svc_restreamer_srt.loadbalancer.server.port=6000"
+  whoami:
+    image: "traefik/whoami"
+    container_name: "whoami"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.kqsfl.com`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.tls.certresolver=cert_resolver"
