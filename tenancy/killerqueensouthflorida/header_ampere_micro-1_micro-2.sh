@@ -49,6 +49,7 @@ echo "Running as $admin_user $(whoami)"
 #get secret
 CLOUDFLARE_TOKEN=SECRET CLOUDFLARE_TOKEN
 CLOUDFLARE_ZONEID=SECRET CLOUDFLARE_ZONEID
+CLOUDFLARE_EMAIL=SECRET CLOUDFLARE_EMAIL
 
 #install DDNS for cloudflare
 #https://github.com/timothymiller/cloudflare-ddns
@@ -77,6 +78,13 @@ cat > cloudflare-ddns/config.json <<-EOF1
 	EOF1
 
 
+#lets encrypt 
+CLOUDFLARE_DNS_API_TOKEN="$CLOUDFLARE_TOKEN" \
+lego --email "$CLOUDFLARE_EMAIL" --dns cloudflare --domains '*.example.org' run
+
+##########################
+##    install docker    ##
+##########################
 
 #https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
@@ -114,48 +122,6 @@ cat > /etc/systemd/system/$servicename.service <<-EOF
 	EOF
 
 systemctl enable $servicename
-
-
-version: '3.3'
-
-services:
-  reverse-proxy:
-    restart: always
-    container_name: reverse-proxy
-    # The official v2 Traefik docker image
-    image: traefik:v2.9
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
-    ports:
-      # The HTTP port
-      - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
-      
-	# https://docs.datarhei.com/restreamer/getting-started/quick-start
-  restreamer:
-      restart: always
-      container_name: restreamer
-      volumes:
-          - '/opt/restreamer/config:/core/config'
-          - '/opt/restreamer/data:/core/data'
-      ports:
-          - '8080:8080'
-          - '8181:8181'
-          - '1935:1935'
-          - '1936:1936'
-          - '6000:6000/udp'
-      image: 'datarhei/restreamer:latest'
-      labels:
-        - "traefik.http.routers.whoami.rule=Host(`restreamer.localhost`)"
-	- traefik.http.routers.cam1.rule=Host(cam1.domain.com)
-	- traefik.http.routers.cam1.tls=true
-	- traefik.http.routers.cam1.tls.certresolver=lets-encrypt
-	- traefik.port=8080
-
 
 
 # https://askubuntu.com/questions/58575/add-lines-to-cron-from-script
