@@ -28,3 +28,32 @@ change_user () {
 SECRET() {
 	oci secrets secret-bundle get-secret-bundle-by-name --vault-id $VAULT --secret-name "$1" | jq -r '.data."secret-bundle-content".content | @base64d'
 }
+
+
+htdigest_add () {
+	user="$1"
+	realm="$2"
+	password="$3"
+	outputfile="$4" #make default /etc/apache2/pw/$user
+	touch "$outputfile"
+	digest="$( printf "%s:%s:%s" "$user" "$realm" "$password" | 
+           md5sum | awk '{print $1}' )"
+	printf "%s:%s:%s\n" "$user" "$realm" "$digest" >> "$outputfile"
+}
+htdigest_remove () {
+	user="$1"
+	realm="$2"
+	outputfile="$3" # make default "/etc/apache2/pw/$user"
+	sed -i -e "/^$user:$realm:/d" "$outputfile"
+}
+htdigest_update () {
+	user="$1"
+	realm="$2"
+	password="$3"
+	outputfile="$4" # make default "/etc/apache2/pw/$user"
+	digest="$( printf "%s:%s:%s" "$user" "$realm" "$password" | 
+           md5sum | awk '{print $1}' )"
+
+	sed -i -e "/^$user:$realm:/ c$user:$realm:$digest" "$outputfile"
+}
+
