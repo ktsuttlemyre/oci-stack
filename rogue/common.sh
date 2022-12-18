@@ -26,10 +26,11 @@ change_user () {
 }
 
 SECRET() {
+	#gets a secret from vault and returns it. You should save it in a environment variable or send it directly to an app
 	oci secrets secret-bundle get-secret-bundle-by-name --vault-id $VAULT --secret-name "$1" | jq -r '.data."secret-bundle-content".content | @base64d'
 }
 
-
+# idea from https://unix.stackexchange.com/questions/45964/scripting-htdigest-c-path-to-file-user-user-password-in-bash
 htdigest_add () {
 	user="$1"
 	realm="$2"
