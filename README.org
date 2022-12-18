@@ -74,3 +74,8 @@ To create a base64 string for saving to the vault use
 
 To create a login ssh key (not api key) use
  `sh-keygen -t rsa -b 4096 -C "user@gmail.com"`
+  to create the pub file use
+ ssh-keygen -y -f ~/.ssh/user > user.pub
+ 
+ 
+ 
