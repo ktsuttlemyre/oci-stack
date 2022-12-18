@@ -65,7 +65,7 @@ services:
 #        - "traefik.http.routers.restreamer_web.tls=true"
 #        - "traefik.http.routers.restreamer_web.tls.certresolver=lets-encrypt"
         - "traefik.http.services.svc_restreamer_web.loadbalancer.server.port=80"
-        - "traefik.http.middlewares.test-auth.digestauth.usersfile=/usersfile"
+        - "traefik.http.middlewares.test-auth.digestauth.usersfile=/authorized_users"
 
 
         - "traefik.udp.routers.restreamer_srt.rule=Host(`srt.${DOMAIN}`)"
