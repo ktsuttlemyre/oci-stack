@@ -59,8 +59,7 @@ resource "oci_core_default_security_list" "this" {
   manage_default_resource_id = oci_core_vcn.this.default_security_list_id
 
   dynamic "ingress_security_rules" {
-    # ports 8080, 8181, 1935, 1936, 6000\udp
-    for_each = [22, 80, 443]
+    for_each = [22, 443]
     iterator = port
     content {
       protocol = "all" #local.protocol_number.tcp
