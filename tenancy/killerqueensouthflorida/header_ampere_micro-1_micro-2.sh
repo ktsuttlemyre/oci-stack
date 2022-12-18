@@ -82,6 +82,10 @@ cat > cloudflare-ddns/config.json <<-EOF1
 CLOUDFLARE_DNS_API_TOKEN="$CLOUDFLARE_TOKEN" \
 lego --email "$CLOUDFLARE_EMAIL" --dns cloudflare --domains '*.example.org' run
 
+#create authorized users for portal access
+SECRET AUTHORIZED_USERS >> authorized_users
+
+
 ##########################
 ##    install docker    ##
 ##########################
