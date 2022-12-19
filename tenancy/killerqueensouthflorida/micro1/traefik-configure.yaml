@@ -1,0 +1,28 @@
+owner: root:root
+path: /opt/traefik/data/traefik-configure.yml
+permissions: '0644'
+-cloud-init-
+#https://12ft.io/proxy?q=https%3A%2F%2Fmedium.com%2F%40containeroo%2Ftraefik-2-0-route-external-services-through-traefik-7bf2d56b1057
+http:
+  routers:
+    pihole:
+      entryPoints:
+        - "https"
+      rule: "Host(`pihole.example.com`)"
+      middlewares:
+        - addprefix-pihole
+      tls:
+        certResolver: http
+      service: pihole
+
+  services:
+    pihole:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.10:80"
+        passHostHeader: true
+#Because the admin panel of Pi-hole is only reachable at the path /admin, you have to create an additional middleware (also in /opt/containers/traefik/data/config.yml):
+  middlewares:
+    addprefix-pihole:
+      addPrefix:
+        prefix: "/admin"
