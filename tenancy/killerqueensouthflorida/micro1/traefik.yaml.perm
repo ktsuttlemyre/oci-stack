@@ -1,7 +1,7 @@
 owner: root:root
 path: /opt/traefik/data/traefik.yml
 permissions: '0644'
--cloud-init-
+-rogue-perm-
 api:
   dashboard: true
   debug: true
