@@ -200,11 +200,11 @@ write_files:
 #    owner: "root:root"
     path: "/root/init_script.sh"
     permissions: '0755'
-%{ for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/micro-${count.index + 1}/**") ~}
-  - encoding: b64
-${join("",["    ",join("\n    ",split("\n",split("-init-header-",file(fn))[0]))])}
-   content: ${base64encode(reverse(split("-init-header-",file(fn)))[0])}
-%{ endfor ~}
+#{ for fn in fileset(".", "./tenancy/{data.oci_identity_tenancy.tenancy.name}/micro-{count.index + 1}/**") ~}
+#  - encoding: b64
+#{join("",["    ",join("\n    ",split("\n",split("-init-header-",file(fn))[0]))])}
+#   content: {base64encode(reverse(split("-init-header-",file(fn)))[0])}
+#{ endfor ~}
 EOF
     )	  	  
   }
@@ -283,11 +283,11 @@ write_files:
 #    owner: "root:root"
     path: "/root/init_script.sh"
     permissions: '0755'
-%{ for fn in fileset(".", "./tenancy/${data.oci_identity_tenancy.tenancy.name}/ampere/**") ~}
-  - encoding: b64
-${join("",["    ",join("\n    ",split("\n",split("-init-header-",file(fn))[0]))])}
-   content: ${base64encode(reverse(split("-init-header-",file(fn)))[0])}
-%{ endfor ~}
+#{ for fn in fileset(".", "./tenancy/{data.oci_identity_tenancy.tenancy.name}/ampere/**") ~}
+#  - encoding: b64
+#{join("",["    ",join("\n    ",split("\n",split("-init-header-",file(fn))[0]))])}
+#   content: {base64encode(reverse(split("-init-header-",file(fn)))[0])}
+#{ endfor ~}
 EOF
     )	  
   }
