@@ -12,11 +12,16 @@ services:
     # Enables the web UI and tells Traefik to listen to docker
     command:
       #- "--log.level=DEBUG"
+      - "--global.sendAnonymousUsage=false"
       - "--dashboard=true"
       - "--api.insecure=true"
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:443"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.streaming.address=:6000/udp"
       - "--certificatesresolvers.cert_resolver.acme.dnsChallenge=true"
       - "--certificatesresolvers.cert_resolver.acme.dnsChallenge.provider=cloudflare"
@@ -28,6 +33,8 @@ services:
       #https://github.com/realtarget/traefik2-docker-stack/issues/7
 #      - "--entrypoints.ssh.address=:23"
     ports:
+      # HTTP port
+      - "80:80" #everything here should get redirected
       # HTTPs port
       - "443:443"
       # Web UI (enabled by --api.insecure=true)
@@ -60,7 +67,7 @@ services:
         - "traefik.enable=true"
 
         - "traefik.http.routers.restreamer_web.rule=Host(`restreamer.${DOMAIN}`)"
-        - "traefik.http.routers.restreamer_web.entrypoints=web"
+        - "traefik.http.routers.restreamer_web.entrypoints=websecure"
         - "traefik.http.routers.restreamer_web.service=svc_restreamer_web"
 #        - "traefik.http.routers.restreamer_web.tls=true"
 #        - "traefik.http.routers.restreamer_web.tls.certresolver=lets-encrypt"
@@ -78,5 +85,5 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.kqsfl.com`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls.certresolver=cert_resolver"
