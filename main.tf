@@ -187,7 +187,7 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
-  - "var AMPERE_PRIVATE_IP ${data.oci_core_private_ips.that.private_ips.0.ip_address}"
+  - "var AMPERE_PRIVATE_IP ${data.oci_core_private_ips.ampere.private_ips.0.ip_address}"
   - "var AMPERE_PUBLIC_IP \"\""
   # https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
   - "sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf"
@@ -220,6 +220,7 @@ EOF
   }
 
   create_vnic_details {
+    assign_public_ip = false
     display_name     = format("Micro %d", count.index + 1)
     hostname_label   = format("micro-%d", count.index + 1)
     nsg_ids          = [oci_core_network_security_group.this.id]
@@ -326,12 +327,12 @@ EOF
   }
 }
 
-#data "oci_core_private_ips" "this" {
-#  count = var.number_of_micros
-#  ip_address = oci_core_instance.micro[count+1].private_ip
-#}
+data "oci_core_private_ips" "micro" {
+ ip_address = oci_core_instance.micro[0].private_ip
+ subnet_id  = oci_core_subnet.this.id
+}
 	
-data "oci_core_private_ips" "that" {
+data "oci_core_private_ips" "ampere" {
   ip_address = oci_core_instance.ampere.private_ip
   subnet_id  = oci_core_subnet.this.id
 }
@@ -340,8 +341,8 @@ resource "oci_core_public_ip" "that" {
   compartment_id = oci_identity_compartment.this.id
   lifetime       = "RESERVED"
 
-  display_name  = oci_core_instance.ampere.display_name
-  private_ip_id = data.oci_core_private_ips.that.private_ips.0.id
+  display_name  = oci_core_instance.micro[0].display_name
+  privateFid = data.oci_core_private_ips.micro.private_ips.0.id
 }
 
 resource "oci_core_volume_backup_policy" "this" {
