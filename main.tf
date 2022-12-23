@@ -372,7 +372,7 @@ resource "oci_core_public_ip" "that" {
   lifetime       = "RESERVED"
 
   display_name  = oci_core_instance.micro[0].display_name
-  privateFid = data.oci_core_private_ips.ampere.private_ips.0.id
+  private_ip_id = data.oci_core_private_ips.ampere.private_ips.0.id
 }
 
 resource "oci_core_volume_backup_policy" "this" {
