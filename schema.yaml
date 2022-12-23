@@ -20,8 +20,8 @@ variables:
     title: VCN CIDR Block
     description: The CIDR block of the VCN created for the compute instance
   skip_init_scripts:
-    title: Should init scripts run?
-    description: Leave empty to run init scripts. Otherwise type "stop" to have a blank stack deploy
+    title: Skip init scripts?
+    description: unchecked means init scripts will run
     type: boolean
     default: false
   number_of_micros:
