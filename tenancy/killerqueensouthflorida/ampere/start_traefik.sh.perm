@@ -1,0 +1,11 @@
+
+-rogue-perm-
+#see https://www.smarthomebeginner.com/cloudflare-settings-for-traefik-docker/
+#ref https://github.com/htpcBeginner/docker-traefik/tree/master
+ 
+file='CLOUDFLARE_IPS.txt'
+
+curl -L 'https://www.cloudflare.com/ips-v4' --silent --output "$file" -z "$file"
+CLOUDFLARE_IPS=echo "$file"| tr '\n' ','
+
+docker-compose up
