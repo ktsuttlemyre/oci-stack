@@ -1,4 +1,5 @@
 ---
+#https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Concepts/terraformconfigresourcemanager_topic-schema.htm
 title: rogue-stack
 description: A platform that deploys the maximal set of resources to run compute instances on the OCI Free Tier
 locale: "en"
