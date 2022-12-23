@@ -124,7 +124,7 @@ resource "oci_vault_secret" "ampere_ip" {
     compartment_id = var.tenancy_ocid
     secret_content {
         #Required
-        content_type = BASE64
+        content_type = "BASE64"
 
         #Optional
         content = "${base64(data.oci_core_private_ips.ampere.private_ips.0.ip_address)}"
@@ -138,7 +138,7 @@ resource "oci_vault_secret" "micro_ip" {
     compartment_id = var.tenancy_ocid
     secret_content {
         #Required
-        content_type = BASE64
+        content_type = "BASE64"
 
         #Optional
         content = "${base64(data.oci_core_private_ips.micro.private_ips.0.ip_address)}"
