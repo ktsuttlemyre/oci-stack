@@ -26,8 +26,8 @@ variable "ssh_public_key" {
 }
 
 variable "skip_init_scripts" {
-  description = "Should this be a base image or customized based on ./tenancy/<tenancyh-name> scripts" 
-  type        = boolean
+  description = "Should this be a base image or customized via scripts in ./tenancy/<tenancy-name>" 
+  type        = bool
   default     = true
 }
 
@@ -39,7 +39,7 @@ variable "number_of_micros" {
 
 variable "use_all_storage" {
   description = "1 or 2" 
-  type        = boolean
+  type        = bool
   default     = false
 }
 
