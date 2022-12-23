@@ -45,7 +45,7 @@ query_wait (){
 update_self (){
         file="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")" # get my script name
         # -z will make curl only download if it's changed
-        curl -L "https://raw.githubusercontent.com/ktsuttlemyre/rogue-stack/main/cloudshell/$file" -s --output "$file" --silent -z "$file"
+        curl -L "https://raw.githubusercontent.com/ktsuttlemyre/rogue-stack/main/cloudshell/$file" --silent --output "$file" -z "$file"
         return
 }
 
