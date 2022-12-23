@@ -135,7 +135,7 @@ resource "oci_vault_secret" "ampere_ip" {
         #Optional
         content = "${base64encode(data.oci_core_private_ips.ampere.private_ips.0.ip_address)}"
     }
-    secret_name = "ampere_ip"
+    secret_name = "AMPERE_PRIVATE_IP"
     vault_id = data.oci_kms_vault.this.id
     key_id = data.oci_kms_keys.this.keys[index(data.oci_kms_keys.this.keys.*.state, "ENABLED")].id
 }
@@ -150,7 +150,7 @@ resource "oci_vault_secret" "micro_ip" {
         #Optional
         content = "${base64encode(data.oci_core_private_ips.micro.private_ips.0.ip_address)}"
     }
-    secret_name = "micro_ip"
+    secret_name = "MICRO1_PRIVATE_IP"
     vault_id = data.oci_kms_vault.this.id
     key_id = data.oci_kms_keys.this.keys[index(data.oci_kms_keys.this.keys.*.state, "ENABLED")].id
 }
@@ -308,8 +308,8 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
-  - "var MICRO_PRIVATE_IP ${data.oci_core_private_ips.micro.private_ips.0.ip_address}"
-  - "var MICRO_PUBLIC_IP \"\""
+  - "var MICRO1_PRIVATE_IP ${data.oci_core_private_ips.micro.private_ips.0.ip_address}"
+  - "var MICRO1_PUBLIC_IP \"\""
   # https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
   - "sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf"
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
