@@ -111,7 +111,7 @@ data "oci_kms_vault" "this" {
 data "oci_kms_keys" "this" {
     #Required
     compartment_id = var.tenancy_ocid
-    management_endpoint = oci_kms_vult.this.management_endpoint
+    management_endpoint = data.oci_kms_vault.this.management_endpoint
 }
 
 data "oci_vault_secrets" "this" {
