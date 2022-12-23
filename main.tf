@@ -108,6 +108,12 @@ data "oci_kms_vault" "this" {
      vault_id = "${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
 }
 
+data "oci_kms_keys" "this" {
+    #Required
+    compartment_id = var.tenancy_ocid
+    management_endpoint = oci_kms_vult.this.management_endpoint
+}
+
 data "oci_vault_secrets" "this" {
     #Required
     compartment_id = var.tenancy_ocid
@@ -131,6 +137,7 @@ resource "oci_vault_secret" "ampere_ip" {
     }
     secret_name = "ampere_ip"
     vault_id = data.oci_kms_vault.this.id
+    key_id = data.oci_kms_keys.this[index(data.oci_kms_keys.this.*.is_primary, true)].id
 }
 
 resource "oci_vault_secret" "micro_ip" {
@@ -145,6 +152,7 @@ resource "oci_vault_secret" "micro_ip" {
     }
     secret_name = "micro_ip"
     vault_id = data.oci_kms_vault.this.id
+    key_id = data.oci_kms_keys.this[index(data.oci_kms_keys.this.*.is_primary, true)].id
 }
 
 data "oci_identity_availability_domains" "this" {
