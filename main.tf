@@ -59,7 +59,7 @@ resource "oci_core_default_security_list" "this" {
   manage_default_resource_id = oci_core_vcn.this.default_security_list_id
 
   dynamic "ingress_security_rules" {
-    for_each = [22, 443]
+    for_each = [80, 443]
     iterator = port
     content {
       protocol = "all" #local.protocol_number.tcp
@@ -342,7 +342,7 @@ resource "oci_core_public_ip" "that" {
   lifetime       = "RESERVED"
 
   display_name  = oci_core_instance.micro[0].display_name
-  privateFid = data.oci_core_private_ips.micro.private_ips.0.id
+  privateFid = data.oci_core_private_ips.ampere.private_ips.0.id
 }
 
 resource "oci_core_volume_backup_policy" "this" {
