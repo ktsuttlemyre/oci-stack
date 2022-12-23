@@ -119,6 +119,34 @@ data "oci_secrets_secretbundle" "this" {
       secret_id = data.oci_vault_secrets.this.secrets[0].id
 }
 
+resource "oci_vault_secret" "ampere_ip" {
+    #Required
+    compartment_id = var.tenancy_ocid
+    secret_content {
+        #Required
+        content_type = BASE64
+
+        #Optional
+        content = "${base64(data.oci_core_private_ips.ampere.private_ips.0.ip_address)}"
+    }
+    secret_name = "ampere_ip"
+    vault_id = data.oci_kms_vault.this.id
+}
+
+resource "oci_vault_secret" "micro_ip" {
+    #Required
+    compartment_id = var.tenancy_ocid
+    secret_content {
+        #Required
+        content_type = BASE64
+
+        #Optional
+        content = "${base64(data.oci_core_private_ips.micro.private_ips.0.ip_address)}"
+    }
+    secret_name = "micro_ip"
+    vault_id = data.oci_kms_vault.this.id
+}
+
 data "oci_identity_availability_domains" "this" {
   compartment_id = var.tenancy_ocid
 }
@@ -187,7 +215,7 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
-  - "var AMPERE_PRIVATE_IP ${data.oci_core_private_ips.ampere.private_ips.0.ip_address}"
+  #- "var AMPERE_PRIVATE_IP {data.oci_core_private_ips.ampere.private_ips.0.ip_address}"
   - "var AMPERE_PUBLIC_IP \"\""
   # https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
   - "sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf"
@@ -272,6 +300,8 @@ runcmd:
   - "var(){ export $1=\"$2\" ; echo \"export $1='$2'\" | tee -a /home/ubuntu/.profile /root/.profile ; }"
   - "var VAULT ${data.oci_kms_vaults.this.vaults[index(data.oci_kms_vaults.this.vaults.*.display_name, data.oci_identity_tenancy.tenancy.name)].id}"
   - "var OCI_CONFIG ${data.oci_secrets_secretbundle.this.secret_bundle_content[0].content}"
+  - "var MICRO_PRIVATE_IP ${data.oci_core_private_ips.micro.private_ips.0.ip_address}"
+  - "var MICRO_PUBLIC_IP \"\""
   # https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
   - "sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf"
   - "[ \"${var.skip_init_scripts}\" ] && exit 0 "
@@ -384,6 +414,8 @@ resource "oci_core_volume_backup_policy_assignment" "this" {
 #     display_name = "vault"
 #     vault_type = "DEFAULT"
 # }
+	
+
 
 #stopped using polocies to manage secrets and now useing oci_confg files/keys
 # if you do use this method again make sure to set env variables on your instances
