@@ -133,7 +133,7 @@ resource "oci_vault_secret" "ampere_ip" {
         content_type = "BASE64"
 
         #Optional
-        content = "${base64(data.oci_core_private_ips.ampere.private_ips.0.ip_address)}"
+        content = "${base64encode(data.oci_core_private_ips.ampere.private_ips.0.ip_address)}"
     }
     secret_name = "ampere_ip"
     vault_id = data.oci_kms_vault.this.id
@@ -148,7 +148,7 @@ resource "oci_vault_secret" "micro_ip" {
         content_type = "BASE64"
 
         #Optional
-        content = "${base64(data.oci_core_private_ips.micro.private_ips.0.ip_address)}"
+        content = "${base64encode(data.oci_core_private_ips.micro.private_ips.0.ip_address)}"
     }
     secret_name = "micro_ip"
     vault_id = data.oci_kms_vault.this.id
