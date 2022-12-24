@@ -138,6 +138,9 @@ resource "oci_vault_secret" "ampere_ip" {
     secret_name = "AMPERE_PRIVATE_IP"
     vault_id = data.oci_kms_vault.this.id
     key_id = data.oci_kms_keys.this.keys[index(data.oci_kms_keys.this.keys.*.state, "ENABLED")].id
+    lifecycle {
+        prevent_destroy = true
+    }
 }
 
 resource "oci_vault_secret" "micro_ip" {
@@ -153,6 +156,9 @@ resource "oci_vault_secret" "micro_ip" {
     secret_name = "MICRO1_PRIVATE_IP"
     vault_id = data.oci_kms_vault.this.id
     key_id = data.oci_kms_keys.this.keys[index(data.oci_kms_keys.this.keys.*.state, "ENABLED")].id
+    lifecycle {
+        prevent_destroy = true
+    }
 }
 
 data "oci_identity_availability_domains" "this" {
